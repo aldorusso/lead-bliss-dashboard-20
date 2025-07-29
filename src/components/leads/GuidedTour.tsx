@@ -35,24 +35,24 @@ const tourSteps: TourStep[] = [
     id: "filters",
     title: "Filtros de leads",
     description: "Aquí puedes buscar y filtrar tus leads por estado, fecha y otros criterios.",
-    target: "[data-tour='filters']",
+    target: '[data-tour="filters"]',
     icon: Filter,
     position: "bottom"
   },
   {
-    id: "stage-manager",
+    id: "stage-manager", 
     title: "Gestionar etapas",
-    description: "Haz clic aquí para personalizar las etapas de tu pipeline de ventas.",
-    target: "[data-tour='stage-manager']",
+    description: "Haz clic en 'Configurar Ahora' para personalizar las etapas de tu pipeline de ventas.",
+    target: 'button',
     icon: Settings,
     position: "bottom",
     action: () => {} // Se define en el componente
   },
   {
     id: "add-lead",
-    title: "Agregar nuevo lead",
-    description: "Usa este botón para agregar nuevos leads a tu sistema.",
-    target: "[data-tour='add-lead']",
+    title: "Agregar nuevo lead", 
+    description: "Haz clic en 'Configurar Ahora' para agregar tu primer lead al sistema.",
+    target: 'button',
     icon: UserPlus,
     position: "left",
     action: () => {} // Se define en el componente
@@ -61,7 +61,7 @@ const tourSteps: TourStep[] = [
     id: "floating-menu",
     title: "Menú de herramientas",
     description: "Aquí encontrarás acceso rápido a WhatsApp, automatizaciones y configuración.",
-    target: "[data-tour='floating-menu']",
+    target: '[data-tour="floating-menu"]',
     icon: MessageCircle,
     position: "left"
   }
@@ -79,13 +79,36 @@ export function GuidedTour({ isOpen, onComplete, onOpenStageManager, onOpenWhats
       return;
     }
 
-    const element = document.querySelector(currentStepData.target);
-    setHighlightedElement(element);
+    // Wait a bit for DOM to be ready
+    const timer = setTimeout(() => {
+      let element = null;
+      
+      // Try different selector strategies based on step
+      if (currentStepData.id === 'stage-manager') {
+        // Find button with text "Gestionar Etapas"
+        element = Array.from(document.querySelectorAll('button')).find(el => 
+          el.textContent?.includes('Gestionar Etapas')
+        );
+      } else if (currentStepData.id === 'add-lead') {
+        // Find button with text "Nuevo Lead"
+        element = Array.from(document.querySelectorAll('button')).find(el => 
+          el.textContent?.includes('Nuevo Lead')
+        );
+      } else {
+        // For data-tour attributes and other selectors
+        element = document.querySelector(currentStepData.target);
+      }
+      
+      console.log(`Tour step: ${currentStepData.id}, target: ${currentStepData.target}, found:`, element);
+      setHighlightedElement(element);
 
-    // Scroll to element if needed
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
+      // Scroll to element if found
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, [currentStep, isOpen, currentStepData]);
 
   const handleNext = () => {
@@ -132,13 +155,16 @@ export function GuidedTour({ isOpen, onComplete, onOpenStageManager, onOpenWhats
       {/* Spotlight effect */}
       {highlightedElement && (
         <div
-          className="fixed border-4 border-primary rounded-lg z-50 pointer-events-none transition-all duration-500"
+          className="fixed z-50 pointer-events-none transition-all duration-500"
           style={{
-            top: highlightedElement.getBoundingClientRect().top - 8,
-            left: highlightedElement.getBoundingClientRect().left - 8,
+            top: highlightedElement.getBoundingClientRect().top - 8 + window.scrollY,
+            left: highlightedElement.getBoundingClientRect().left - 8 + window.scrollX,
             width: highlightedElement.getBoundingClientRect().width + 16,
             height: highlightedElement.getBoundingClientRect().height + 16,
-            boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.5)"
+            border: '4px solid #3b82f6',
+            borderRadius: '8px',
+            boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.7), 0 0 20px rgba(59, 130, 246, 0.5)',
+            background: 'transparent'
           }}
         />
       )}
