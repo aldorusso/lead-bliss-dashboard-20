@@ -83,28 +83,15 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [] }:
           <SelectContent className="bg-popover border-border/60">
             <SelectItem value="all">Todos los estados ({leads.length})</SelectItem>
             <SelectItem value="nuevo">Nuevo ({getStatusCount('nuevo')})</SelectItem>
-            <SelectItem value="contactado">Contactado ({getStatusCount('contactado')})</SelectItem>
-            <SelectItem value="calificado">Calificado ({getStatusCount('calificado')})</SelectItem>
-            <SelectItem value="propuesta">Propuesta ({getStatusCount('propuesta')})</SelectItem>
+            <SelectItem value="consulta-inicial">Consulta Inicial ({getStatusCount('consulta-inicial')})</SelectItem>
+            <SelectItem value="evaluacion">Evaluación ({getStatusCount('evaluacion')})</SelectItem>
+            <SelectItem value="cotizacion">Cotización ({getStatusCount('cotizacion')})</SelectItem>
+            <SelectItem value="programado">Programado ({getStatusCount('programado')})</SelectItem>
             <SelectItem value="cerrado">Cerrado ({getStatusCount('cerrado')})</SelectItem>
             <SelectItem value="perdido">Perdido ({getStatusCount('perdido')})</SelectItem>
           </SelectContent>
         </Select>
 
-        <Select value={filters.tags} onValueChange={(value) => updateFilter("tags", value)}>
-          <SelectTrigger className="w-40 bg-background border-border/60">
-            <SelectValue placeholder="Etiquetas" />
-          </SelectTrigger>
-          <SelectContent className="bg-popover border-border/60">
-            <SelectItem value="all">Todas las etiquetas</SelectItem>
-            <SelectItem value="premium">Premium ({getTagCount('premium')})</SelectItem>
-            <SelectItem value="startup">Startup ({getTagCount('startup')})</SelectItem>
-            <SelectItem value="empresa">Empresa ({getTagCount('empresa')})</SelectItem>
-            <SelectItem value="urgente">Urgente ({getTagCount('urgente')})</SelectItem>
-            <SelectItem value="demo">Demo ({getTagCount('demo')})</SelectItem>
-            <SelectItem value="presupuesto">Presupuesto ({getTagCount('presupuesto')})</SelectItem>
-          </SelectContent>
-        </Select>
 
         <Select value={filters.dateRange} onValueChange={(value) => updateFilter("dateRange", value)}>
           <SelectTrigger className="w-40 bg-background border-border/60">

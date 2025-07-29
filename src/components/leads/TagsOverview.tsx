@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Lead } from "./LeadCard";
@@ -11,6 +12,7 @@ interface TagsOverviewProps {
 }
 
 export function TagsOverview({ leads, onTagClick, selectedTag }: TagsOverviewProps) {
+  const [showAll, setShowAll] = useState(false);
   // Calcular estadísticas de etiquetas
   const tagStats = leads.reduce((acc, lead) => {
     if (lead.tags) {
@@ -23,8 +25,9 @@ export function TagsOverview({ leads, onTagClick, selectedTag }: TagsOverviewPro
 
   // Ordenar etiquetas por frecuencia (más comunes primero)
   const sortedTags = Object.entries(tagStats)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 12); // Mostrar solo las 12 etiquetas más populares
+    .sort(([, a], [, b]) => b - a);
+
+  const displayedTags = showAll ? sortedTags : sortedTags.slice(0, 12);
 
   if (sortedTags.length === 0) {
     return null;
@@ -43,7 +46,7 @@ export function TagsOverview({ leads, onTagClick, selectedTag }: TagsOverviewPro
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
-        {sortedTags.map(([tag, count]) => {
+        {displayedTags.map(([tag, count]) => {
           const isSelected = selectedTag === tag;
           return (
             <button
@@ -82,10 +85,18 @@ export function TagsOverview({ leads, onTagClick, selectedTag }: TagsOverviewPro
         })}
       </div>
       
-      {Object.keys(tagStats).length > 12 && (
-        <p className="text-xs text-muted-foreground mt-3 text-center">
-          {Object.keys(tagStats).length - 12} etiquetas más...
-        </p>
+      {sortedTags.length > 12 && (
+        <div className="flex justify-center mt-3">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="text-xs text-primary hover:text-primary/80 font-medium transition-colors"
+          >
+            {showAll 
+              ? 'Mostrar menos' 
+              : `${sortedTags.length - 12} etiquetas más...`
+            }
+          </button>
+        </div>
       )}
     </div>
   );
