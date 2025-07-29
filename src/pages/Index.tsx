@@ -60,10 +60,8 @@ const Index = () => {
   
   // Check if this is the first time using the app
   useEffect(() => {
-    const hasCompletedSetup = localStorage.getItem('hasCompletedSetup');
-    if (!hasCompletedSetup) {
-      setIsSetupWizardOpen(true);
-    }
+    // Always show tour for now
+    setIsSetupWizardOpen(true);
   }, []);
 
   const { toast } = useToast();
