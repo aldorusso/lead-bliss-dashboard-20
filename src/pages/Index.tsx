@@ -37,6 +37,7 @@ const Index = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isAutomationsOpen, setIsAutomationsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | undefined>(undefined);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
@@ -147,6 +148,10 @@ const Index = () => {
 
   const handleOpenSettings = () => {
     setIsSettingsOpen(true);
+  };
+
+  const handleOpenWhatsApp = () => {
+    setIsWhatsAppOpen(true);
   };
 
   const handleImportLeads = (importedLeads: Lead[]) => {
@@ -394,10 +399,14 @@ const Index = () => {
           userAvatar="https://images.unsplash.com/photo-1494790108755-2616b9211ae9?w=150&h=150&fit=crop&crop=face"
           onAutomationsClick={handleOpenAutomations}
           onSettingsClick={handleOpenSettings}
+          onWhatsAppClick={handleOpenWhatsApp}
         />
 
         {/* WhatsApp Widget */}
-        <WhatsAppWidget />
+        <WhatsAppWidget 
+          isOpen={isWhatsAppOpen}
+          onClose={() => setIsWhatsAppOpen(false)}
+        />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Settings, User, LogOut, Zap, X, Moon, Sun } from "lucide-react";
+import { Settings, User, LogOut, Zap, X, Moon, Sun, MessageCircle } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/translations";
@@ -12,9 +12,10 @@ interface FloatingMenuProps {
   userAvatar?: string;
   onAutomationsClick?: () => void;
   onSettingsClick?: () => void;
+  onWhatsAppClick?: () => void;
 }
 
-export function FloatingMenu({ userName = "Usuario", userAvatar, onAutomationsClick, onSettingsClick }: FloatingMenuProps) {
+export function FloatingMenu({ userName = "Usuario", userAvatar, onAutomationsClick, onSettingsClick, onWhatsAppClick }: FloatingMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
@@ -50,6 +51,9 @@ export function FloatingMenu({ userName = "Usuario", userAvatar, onAutomationsCl
       case "automations":
         onAutomationsClick?.();
         break;
+      case "whatsapp":
+        onWhatsAppClick?.();
+        break;
       case "settings":
         onSettingsClick?.();
         break;
@@ -74,6 +78,12 @@ export function FloatingMenu({ userName = "Usuario", userAvatar, onAutomationsCl
       label: theme === "dark" ? t('lightMode') : t('darkMode'),
       icon: theme === "dark" ? Sun : Moon,
       onClick: () => handleAction("theme"),
+    },
+    {
+      id: "whatsapp",
+      label: "WhatsApp Automático",
+      icon: MessageCircle,
+      onClick: () => handleAction("whatsapp"),
     },
     {
       id: "automations",

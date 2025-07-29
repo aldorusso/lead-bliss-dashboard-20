@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Tipos para la configuración de mensajes
 interface MessageTemplate {
@@ -50,8 +51,12 @@ const treatmentsList = [
   "CoolSculpting",
 ];
 
-export function WhatsAppWidget() {
-  const [isOpen, setIsOpen] = useState(false);
+interface WhatsAppWidgetProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
   const [editingMessage, setEditingMessage] = useState<string | null>(null);
   const [newTreatment, setNewTreatment] = useState("");
   const [pipelines, setPipelines] = useState<TreatmentPipeline[]>([
@@ -69,7 +74,7 @@ export function WhatsAppWidget() {
         },
         {
           id: "1-consulta",
-          stage: "consulta-inicial",
+          stage: "consulta-inicial", 
           message: "¡Perfecto! Ya tienes tu consulta inicial para [tratamiento] programada. ¿Tienes alguna pregunta antes de la cita?",
           isActive: true,
         },
@@ -208,27 +213,24 @@ export function WhatsAppWidget() {
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="fixed bottom-6 right-6 z-50 shadow-lg hover:shadow-xl transition-all duration-200"
-        >
-          <MessageCircle className="w-4 h-4 mr-2 text-green-600" />
-          WhatsApp
-        </Button>
-      </SheetTrigger>
-      
-      <SheetContent side="right" className="w-[600px] sm:max-w-[600px] p-0">
-        <SheetHeader className="p-6 border-b border-border">
-          <SheetTitle className="flex items-center gap-2">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0">
+        <DialogHeader className="p-6 border-b border-border">
+          <DialogTitle className="flex items-center gap-2">
             <MessageCircle className="w-5 h-5 text-green-600" />
-            Mensajes WhatsApp por Etapa
-          </SheetTitle>
-        </SheetHeader>
+            Mensajes WhatsApp Automáticos por Etapa
+          </DialogTitle>
+        </DialogHeader>
 
-        <div className="h-full overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Explicación de funcionamiento */}
+          <Alert>
+            <MessageCircle className="h-4 w-4" />
+            <AlertDescription>
+              <strong>¿Cómo funciona?</strong> Los mensajes se envían automáticamente cuando un lead cambia de etapa. 
+              Configura mensajes personalizados para cada tratamiento y etapa del pipeline.
+            </AlertDescription>
+          </Alert>
           {/* Agregar nuevo tratamiento */}
           <Card>
             <CardHeader className="pb-3">
@@ -385,7 +387,7 @@ export function WhatsAppWidget() {
             </div>
           )}
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 }
