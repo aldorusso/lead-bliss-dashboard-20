@@ -46,14 +46,14 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [] }:
   return (
     <div className="flex flex-wrap items-center justify-between gap-4 bg-muted/30 border border-border/40 rounded-lg p-4">
       <div className="flex flex-wrap gap-4 items-center">
-        {/* Buscador con fondo distintivo */}
-        <div className="relative">
+        {/* Buscador con fondo distintivo - más grande */}
+        <div className="relative flex-1 min-w-96">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             placeholder="Buscar leads..."
             value={filters.search}
             onChange={(e) => updateFilter("search", e.target.value)}
-            className="pl-10 w-64 bg-background/80 border-border/60 focus:border-primary transition-colors shadow-sm"
+            className="pl-10 w-full bg-background/80 border-border/60 focus:border-primary transition-colors shadow-sm"
           />
         </div>
 
