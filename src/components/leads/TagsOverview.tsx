@@ -29,55 +29,50 @@ export function TagsOverview({ leads }: TagsOverviewProps) {
   }
 
   return (
-    <Card className="bg-gradient-card border-border/60 shadow-card">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold text-foreground flex items-center">
-          <Tag className="h-5 w-5 mr-2 text-primary" />
-          Etiquetas Populares
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex flex-wrap gap-2">
-          {sortedTags.map(([tag, count]) => (
-            <div
-              key={tag}
-              className="relative group"
-            >
-              <Badge
-                variant="secondary"
-                className="text-sm font-medium px-3 py-1 cursor-default transition-all hover:scale-105"
-                style={{
-                  backgroundColor: getTagBackgroundColor(tag),
-                  color: getTagColor(tag),
-                  border: `1px solid ${getTagColor(tag)}20`,
-                }}
-              >
-                {tag}
-                <span 
-                  className="ml-2 px-1.5 py-0.5 rounded-full text-xs font-bold"
-                  style={{
-                    backgroundColor: getTagColor(tag),
-                    color: 'white',
-                  }}
-                >
-                  {count}
-                </span>
-              </Badge>
-              
-              {/* Tooltip */}
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-popover border border-border rounded text-xs text-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                {count} lead{count !== 1 ? 's' : ''} con esta etiqueta
-              </div>
-            </div>
-          ))}
+    <div className="bg-muted/20 border border-border/40 rounded-lg p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center text-sm text-muted-foreground">
+          <Tag className="h-4 w-4 mr-2" />
+          <span>Etiquetas más frecuentes</span>
         </div>
-        
-        {Object.keys(tagStats).length > 12 && (
-          <p className="text-xs text-muted-foreground mt-3">
-            Mostrando las 12 etiquetas más populares de {Object.keys(tagStats).length} total
-          </p>
-        )}
-      </CardContent>
-    </Card>
+        <span className="text-xs text-muted-foreground">
+          {Object.keys(tagStats).length} etiquetas
+        </span>
+      </div>
+      
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
+        {sortedTags.map(([tag, count]) => (
+          <div
+            key={tag}
+            className="group flex items-center justify-between bg-background/60 hover:bg-background border border-border/60 rounded-md px-2 py-1.5 transition-all duration-200 hover:shadow-sm"
+          >
+            <div className="flex items-center min-w-0">
+              <div 
+                className="w-2 h-2 rounded-full mr-2 flex-shrink-0"
+                style={{ backgroundColor: getTagColor(tag) }}
+              />
+              <span className="text-xs text-foreground truncate font-medium">
+                {tag}
+              </span>
+            </div>
+            <span 
+              className="text-xs font-semibold ml-1 px-1.5 py-0.5 rounded-full flex-shrink-0"
+              style={{
+                backgroundColor: `${getTagColor(tag)}15`,
+                color: getTagColor(tag),
+              }}
+            >
+              {count}
+            </span>
+          </div>
+        ))}
+      </div>
+      
+      {Object.keys(tagStats).length > 12 && (
+        <p className="text-xs text-muted-foreground mt-3 text-center">
+          {Object.keys(tagStats).length - 12} etiquetas más...
+        </p>
+      )}
+    </div>
   );
 }
