@@ -10,6 +10,12 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Tipos para la configuración de mensajes
+interface Stage {
+  key: string;
+  label: string;
+  color: string;
+}
+
 interface MessageTemplate {
   id: string;
   stage: string;
@@ -29,7 +35,7 @@ interface TreatmentPipeline {
   messageTemplates: MessageTemplate[];
 }
 
-const pipelineStages = [
+const defaultStages: Stage[] = [
   { key: "nuevo", label: "Nuevo", color: "bg-blue-400" },
   { key: "consulta-inicial", label: "Consulta", color: "bg-yellow-400" },
   { key: "evaluacion", label: "Evaluación", color: "bg-purple-400" },
@@ -54,9 +60,10 @@ const treatmentsList = [
 interface WhatsAppWidgetProps {
   isOpen: boolean;
   onClose: () => void;
+  stages?: Stage[];
 }
 
-export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
+export function WhatsAppWidget({ isOpen, onClose, stages = defaultStages }: WhatsAppWidgetProps) {
   const [editingMessage, setEditingMessage] = useState<string | null>(null);
   const [newTreatment, setNewTreatment] = useState("");
   const [pipelines, setPipelines] = useState<TreatmentPipeline[]>([
@@ -64,7 +71,7 @@ export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
       id: "1",
       name: "Botox",
       isExpanded: true,
-      stages: pipelineStages,
+      stages: stages,
       messageTemplates: [
         {
           id: "1-nuevo",
@@ -90,7 +97,7 @@ export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
       id: "2",
       name: "Depilación láser",
       isExpanded: false,
-      stages: pipelineStages,
+      stages: stages,
       messageTemplates: [
         {
           id: "2-nuevo",
@@ -122,7 +129,7 @@ export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
   };
 
   const addMessageTemplate = (pipelineId: string, stage: string) => {
-    const stageInfo = pipelineStages.find(s => s.key === stage);
+    const stageInfo = stages.find(s => s.key === stage);
     if (!stageInfo) return;
 
     const pipeline = pipelines.find(p => p.id === pipelineId);
@@ -152,7 +159,7 @@ export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
       id: Date.now().toString(),
       name: newTreatment,
       isExpanded: true,
-      stages: pipelineStages,
+      stages: stages,
       messageTemplates: [],
     };
 

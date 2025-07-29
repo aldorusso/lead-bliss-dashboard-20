@@ -1,30 +1,37 @@
 import { Lead } from "./LeadCard";
 
+interface Stage {
+  key: string;
+  label: string;
+  color: string;
+}
+
 interface LeadPipelineProps {
   status: Lead["status"];
   className?: string;
-  onStatusClick?: (status: Lead["status"]) => void;
+  onStatusClick?: (status: string) => void;
+  stages?: Stage[];
 }
 
-const pipelineStages = [
+const defaultStages: Stage[] = [
   { key: "nuevo", label: "Nuevo", color: "bg-blue-400" },
   { key: "consulta-inicial", label: "Consulta", color: "bg-yellow-400" },
   { key: "evaluacion", label: "Evaluación", color: "bg-purple-400" },
   { key: "cotizacion", label: "Cotización", color: "bg-orange-400" },
   { key: "programado", label: "Programado", color: "bg-indigo-400" },
   { key: "cerrado", label: "Cerrado", color: "bg-green-400" },
-] as const;
+];
 
-export function LeadPipeline({ status, className = "", onStatusClick }: LeadPipelineProps) {
+export function LeadPipeline({ status, className = "", onStatusClick, stages = defaultStages }: LeadPipelineProps) {
   // Encontrar el índice de la etapa actual
-  const currentStageIndex = pipelineStages.findIndex(stage => stage.key === status);
+  const currentStageIndex = stages.findIndex(stage => stage.key === status);
   
   // Si el status es "perdido", mostrar diferente
   if (status === "perdido") {
     return (
       <div className={`flex items-center space-x-1 ${className}`}>
         <div className="flex items-center space-x-0.5">
-          {pipelineStages.slice(0, 3).map((stage, index) => (
+          {stages.slice(0, 3).map((stage, index) => (
             <div key={stage.key} className="flex items-center">
               <div className="w-2 h-2 rounded-full bg-muted border border-border" />
               {index < 2 && <div className="w-2 h-0.5 bg-muted" />}
@@ -41,7 +48,7 @@ export function LeadPipeline({ status, className = "", onStatusClick }: LeadPipe
 
   return (
     <div className={`flex items-center space-x-0.5 ${className}`}>
-      {pipelineStages.map((stage, index) => {
+      {stages.map((stage, index) => {
         const isCompleted = index < currentStageIndex;
         const isCurrent = index === currentStageIndex;
         const isUpcoming = index > currentStageIndex;
@@ -62,7 +69,7 @@ export function LeadPipeline({ status, className = "", onStatusClick }: LeadPipe
             />
             
             {/* Línea conectora */}
-            {index < pipelineStages.length - 1 && (
+            {index < stages.length - 1 && (
               <div 
                 className={`w-1.5 h-0.5 transition-colors duration-200 ${
                   isCompleted ? "bg-primary/60" : "bg-muted"
@@ -76,7 +83,7 @@ export function LeadPipeline({ status, className = "", onStatusClick }: LeadPipe
       {/* Etiqueta de etapa actual */}
       <div className="ml-2">
         <span className="text-xs text-muted-foreground font-medium">
-          {pipelineStages[currentStageIndex]?.label || status}
+          {stages[currentStageIndex]?.label || status}
         </span>
       </div>
     </div>

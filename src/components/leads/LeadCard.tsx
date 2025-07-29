@@ -28,6 +28,12 @@ export interface Lead {
   interestedTreatments?: string[];
 }
 
+interface Stage {
+  key: string;
+  label: string;
+  color: string;
+}
+
 interface LeadCardProps {
   lead: Lead;
   onCall?: (lead: Lead) => void;
@@ -35,6 +41,7 @@ interface LeadCardProps {
   onSchedule?: (lead: Lead) => void;
   onViewDetails?: (lead: Lead) => void;
   onStatusClick?: (status: Lead["status"]) => void;
+  stages?: Stage[];
 }
 
 const statusConfig = {
@@ -47,7 +54,7 @@ const statusConfig = {
   perdido: { color: "bg-red-500", label: "Perdido", variant: "destructive" as const },
 };
 
-export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails, onStatusClick }: LeadCardProps) {
+export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails, onStatusClick, stages }: LeadCardProps) {
   const { t } = useTranslation();
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -138,6 +145,7 @@ export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails, onS
             status={lead.status} 
             className="justify-center" 
             onStatusClick={onStatusClick}
+            stages={stages}
           />
         </div>
 

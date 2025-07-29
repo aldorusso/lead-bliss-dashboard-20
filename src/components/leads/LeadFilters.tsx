@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Search, Filter, X, Plus } from "lucide-react";
+import { StageManager } from "./StageManager";
 
 interface FilterState {
   search: string;
@@ -17,14 +18,22 @@ interface FilterState {
   dateRange: string;
 }
 
+interface Stage {
+  key: string;
+  label: string;
+  color: string;
+}
+
 interface LeadFiltersProps {
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
   onAddLead: () => void;
   leads?: any[]; // Para calcular los contadores
+  stages: Stage[];
+  onStagesChange: (stages: Stage[]) => void;
 }
 
-export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [] }: LeadFiltersProps) {
+export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [], stages, onStagesChange }: LeadFiltersProps) {
   const updateFilter = (key: keyof FilterState, value: string) => {
     onFiltersChange({ ...filters, [key]: value });
   };
@@ -68,12 +77,11 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [] }:
           </SelectTrigger>
           <SelectContent className="bg-popover border-border/60">
             <SelectItem value="all">Todos los estados ({leads.length})</SelectItem>
-            <SelectItem value="nuevo">Nuevo ({getStatusCount('nuevo')})</SelectItem>
-            <SelectItem value="consulta-inicial">Consulta Inicial ({getStatusCount('consulta-inicial')})</SelectItem>
-            <SelectItem value="evaluacion">Evaluación ({getStatusCount('evaluacion')})</SelectItem>
-            <SelectItem value="cotizacion">Cotización ({getStatusCount('cotizacion')})</SelectItem>
-            <SelectItem value="programado">Programado ({getStatusCount('programado')})</SelectItem>
-            <SelectItem value="cerrado">Cerrado ({getStatusCount('cerrado')})</SelectItem>
+            {stages.map((stage) => (
+              <SelectItem key={stage.key} value={stage.key}>
+                {stage.label} ({getStatusCount(stage.key)})
+              </SelectItem>
+            ))}
             <SelectItem value="perdido">Perdido ({getStatusCount('perdido')})</SelectItem>
           </SelectContent>
         </Select>
@@ -106,6 +114,9 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [] }:
             </Button>
           </div>
         )}
+
+        {/* Gestión de Etapas */}
+        <StageManager stages={stages} onStagesChange={onStagesChange} />
       </div>
 
       {/* Botón Nuevo Lead */}

@@ -28,6 +28,14 @@ import { useTranslation } from "@/lib/translations";
 const Index = () => {
   const { t } = useTranslation();
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
+  const [stages, setStages] = useState([
+    { key: "nuevo", label: "Nuevo", color: "bg-blue-400" },
+    { key: "consulta-inicial", label: "Consulta", color: "bg-yellow-400" },
+    { key: "evaluacion", label: "Evaluación", color: "bg-purple-400" },
+    { key: "cotizacion", label: "Cotización", color: "bg-orange-400" },
+    { key: "programado", label: "Programado", color: "bg-indigo-400" },
+    { key: "cerrado", label: "Cerrado", color: "bg-green-400" },
+  ]);
   const [filters, setFilters] = useState({
     search: "",
     status: "all",
@@ -211,6 +219,8 @@ const Index = () => {
           onFiltersChange={handleFiltersChange}
           onAddLead={handleAddLead}
           leads={leads}
+          stages={stages}
+          onStagesChange={setStages}
         />
 
         {/* View Controls */}
@@ -236,6 +246,7 @@ const Index = () => {
                 onSchedule={handleSchedule}
                 onViewDetails={handleViewDetails}
                 onStatusClick={(status) => handleFiltersChange({ ...filters, status: filters.status === status ? "all" : status })}
+                stages={stages}
               />
             ))}
           </div>
@@ -406,6 +417,7 @@ const Index = () => {
         <WhatsAppWidget 
           isOpen={isWhatsAppOpen}
           onClose={() => setIsWhatsAppOpen(false)}
+          stages={stages}
         />
       </div>
     </div>
