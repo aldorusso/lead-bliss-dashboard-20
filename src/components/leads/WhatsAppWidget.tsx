@@ -216,8 +216,8 @@ export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl w-[95vw] max-h-[95vh] overflow-hidden p-0 gap-0">
-        <DialogHeader className="p-4 sm:p-6 border-b border-border">
+      <DialogContent className="max-w-7xl w-[95vw] h-[95vh] flex flex-col overflow-hidden p-0 gap-0">
+        <DialogHeader className="p-4 sm:p-6 border-b border-border shrink-0">
           <DialogTitle className="flex items-center gap-2 text-sm sm:text-base">
             <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
             <span className="hidden sm:inline">Mensajes WhatsApp Automáticos por Etapa</span>
@@ -225,9 +225,9 @@ export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-4 sm:space-y-6">
           {/* Explicación de funcionamiento */}
-          <Alert>
+          <Alert className="shrink-0">
             <MessageCircle className="h-4 w-4" />
             <AlertDescription className="text-xs sm:text-sm">
               <strong>¿Cómo funciona?</strong> Los mensajes se envían automáticamente cuando un lead cambia de etapa. 
@@ -235,7 +235,7 @@ export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
             </AlertDescription>
           </Alert>
           {/* Agregar nuevo tratamiento */}
-          <Card>
+          <Card className="shrink-0">
             <CardHeader className="pb-3">
               <CardTitle className="text-sm sm:text-base">Agregar Nuevo Tratamiento</CardTitle>
             </CardHeader>
@@ -269,29 +269,30 @@ export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
           </Card>
 
           {/* Pipelines por tratamiento */}
-          {pipelines.map((pipeline) => (
-            <Card key={pipeline.id} className="border border-border">
-              <Collapsible 
-                open={pipeline.isExpanded} 
-                onOpenChange={() => togglePipelineExpansion(pipeline.id)}
-              >
-                <CollapsibleTrigger asChild>
-                  <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-sm sm:text-lg flex items-center gap-2">
-                        {pipeline.isExpanded ? (
-                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
-                        ) : (
-                          <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
-                        )}
-                        <span className="truncate">{pipeline.name}</span>
-                        <Badge variant="secondary" className="text-xs">
-                          {pipeline.messageTemplates.filter(t => t.isActive).length} activos
-                        </Badge>
-                      </CardTitle>
-                    </div>
-                  </CardHeader>
-                </CollapsibleTrigger>
+          <div className="space-y-4 sm:space-y-6">
+            {pipelines.map((pipeline) => (
+              <Card key={pipeline.id} className="border border-border">
+                <Collapsible 
+                  open={pipeline.isExpanded} 
+                  onOpenChange={() => togglePipelineExpansion(pipeline.id)}
+                >
+                  <CollapsibleTrigger asChild>
+                    <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-sm sm:text-lg flex items-center gap-2">
+                          {pipeline.isExpanded ? (
+                            <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                          ) : (
+                            <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
+                          )}
+                          <span className="truncate">{pipeline.name}</span>
+                          <Badge variant="secondary" className="text-xs">
+                            {pipeline.messageTemplates.filter(t => t.isActive).length} activos
+                          </Badge>
+                        </CardTitle>
+                      </div>
+                    </CardHeader>
+                  </CollapsibleTrigger>
 
                 <CollapsibleContent>
                   <CardContent className="space-y-4">
@@ -387,15 +388,16 @@ export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
                 </CollapsibleContent>
               </Collapsible>
             </Card>
-          ))}
+            ))}
 
-          {pipelines.length === 0 && (
-            <div className="text-center py-8 sm:py-12 text-muted-foreground">
-              <MessageCircle className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-4 opacity-50" />
-              <p className="text-base sm:text-lg font-medium">No hay tratamientos configurados</p>
-              <p className="text-xs sm:text-sm">Agrega tu primer tratamiento para comenzar</p>
-            </div>
-          )}
+            {pipelines.length === 0 && (
+              <div className="text-center py-8 sm:py-12 text-muted-foreground">
+                <MessageCircle className="w-8 h-8 sm:w-12 sm:h-12 mx-auto mb-4 opacity-50" />
+                <p className="text-base sm:text-lg font-medium">No hay tratamientos configurados</p>
+                <p className="text-xs sm:text-sm">Agrega tu primer tratamiento para comenzar</p>
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
