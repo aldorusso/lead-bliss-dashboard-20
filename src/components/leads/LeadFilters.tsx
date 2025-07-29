@@ -43,33 +43,24 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [] }:
     return leads.filter(lead => lead.status === status).length;
   };
 
-  // Calcular contadores por etiqueta
-  const getTagCount = (tag: string) => {
-    return leads.filter(lead => lead.tags?.includes(tag)).length;
-  };
-
   return (
-    <div className="space-y-4">
-      {/* Primera línea: Búsqueda más compacta */}
-      <div className="flex items-center gap-4">
-        <div className="relative w-80">
+    <div className="flex flex-wrap items-center justify-between gap-4 bg-muted/30 border border-border/40 rounded-lg p-4">
+      <div className="flex flex-wrap gap-4 items-center">
+        {/* Buscador con fondo distintivo */}
+        <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             placeholder="Buscar leads..."
             value={filters.search}
             onChange={(e) => updateFilter("search", e.target.value)}
-            className="pl-10 bg-background border-border/60 focus:border-primary transition-colors"
+            className="pl-10 w-64 bg-background/80 border-border/60 focus:border-primary transition-colors shadow-sm"
           />
         </div>
-      </div>
 
-      {/* Segunda línea: Filtros y botón nuevo lead */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap gap-3 items-center">
-          <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Filtros:</span>
-          </div>
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Filtros:</span>
+        </div>
 
         <Select value={filters.status} onValueChange={(value) => updateFilter("status", value)}>
           <SelectTrigger className="w-40 bg-background border-border/60">
@@ -87,46 +78,44 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [] }:
           </SelectContent>
         </Select>
 
+        <Select value={filters.dateRange} onValueChange={(value) => updateFilter("dateRange", value)}>
+          <SelectTrigger className="w-40 bg-background border-border/60">
+            <SelectValue placeholder="Período" />
+          </SelectTrigger>
+          <SelectContent className="bg-popover border-border/60">
+            <SelectItem value="all">Todo el tiempo</SelectItem>
+            <SelectItem value="today">Hoy</SelectItem>
+            <SelectItem value="week">Esta semana</SelectItem>
+            <SelectItem value="month">Este mes</SelectItem>
+            <SelectItem value="quarter">Este trimestre</SelectItem>
+          </SelectContent>
+        </Select>
 
-          <Select value={filters.dateRange} onValueChange={(value) => updateFilter("dateRange", value)}>
-            <SelectTrigger className="w-40 bg-background border-border/60">
-              <SelectValue placeholder="Período" />
-            </SelectTrigger>
-            <SelectContent className="bg-popover border-border/60">
-              <SelectItem value="all">Todo el tiempo</SelectItem>
-              <SelectItem value="today">Hoy</SelectItem>
-              <SelectItem value="week">Esta semana</SelectItem>
-              <SelectItem value="month">Este mes</SelectItem>
-              <SelectItem value="quarter">Este trimestre</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {activeFiltersCount > 0 && (
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="text-xs">
-                {activeFiltersCount} filtro{activeFiltersCount !== 1 ? 's' : ''} activo{activeFiltersCount !== 1 ? 's' : ''}
-              </Badge>
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={clearFilters}
-                className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Botón Nuevo Lead */}
-        <Button 
-          onClick={onAddLead}
-          className="bg-gradient-primary hover:opacity-90 transition-opacity shadow-glow whitespace-nowrap"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Nuevo Lead
-        </Button>
+        {activeFiltersCount > 0 && (
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="text-xs">
+              {activeFiltersCount} filtro{activeFiltersCount !== 1 ? 's' : ''} activo{activeFiltersCount !== 1 ? 's' : ''}
+            </Badge>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={clearFilters}
+              className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
+            >
+              <X className="h-3 w-3" />
+            </Button>
+          </div>
+        )}
       </div>
+
+      {/* Botón Nuevo Lead */}
+      <Button 
+        onClick={onAddLead}
+        className="bg-gradient-primary hover:opacity-90 transition-opacity shadow-glow whitespace-nowrap"
+      >
+        <Plus className="h-4 w-4 mr-2" />
+        Nuevo Lead
+      </Button>
     </div>
   );
 }
