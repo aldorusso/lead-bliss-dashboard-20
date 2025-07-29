@@ -62,7 +62,7 @@ export function LeadStats({ leads = [] }: LeadStatsProps) {
   // Calculate real stats from leads data
   const totalLeads = leads.length;
   const newLeads = leads.filter(lead => lead.status === 'nuevo').length;
-  const qualifiedLeads = leads.filter(lead => lead.status === 'calificado').length;
+  const qualifiedLeads = leads.filter(lead => lead.status === 'evaluacion').length;
   const closedLeads = leads.filter(lead => lead.status === 'cerrado').length;
   const lostLeads = leads.filter(lead => lead.status === 'perdido').length;
   const activeLeads = leads.filter(lead => !['cerrado', 'perdido'].includes(lead.status)).length;

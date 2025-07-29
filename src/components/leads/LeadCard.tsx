@@ -18,11 +18,12 @@ export interface Lead {
   name: string;
   email: string;
   phone: string;
-  status: "nuevo" | "contactado" | "calificado" | "propuesta" | "cerrado" | "perdido";
+  status: "nuevo" | "consulta-inicial" | "evaluacion" | "cotizacion" | "programado" | "cerrado" | "perdido";
   lastContact: string;
   comments?: Comment[];
   tags?: string[];
   avatar?: string;
+  interestedTreatments?: string[];
 }
 
 interface LeadCardProps {
@@ -35,9 +36,10 @@ interface LeadCardProps {
 
 const statusConfig = {
   nuevo: { color: "bg-blue-500", label: "Nuevo", variant: "default" as const },
-  contactado: { color: "bg-yellow-500", label: "Contactado", variant: "secondary" as const },
-  calificado: { color: "bg-purple-500", label: "Calificado", variant: "outline" as const },
-  propuesta: { color: "bg-orange-500", label: "Propuesta", variant: "default" as const },
+  "consulta-inicial": { color: "bg-yellow-500", label: "Consulta Inicial", variant: "secondary" as const },
+  evaluacion: { color: "bg-purple-500", label: "Evaluación", variant: "outline" as const },
+  cotizacion: { color: "bg-orange-500", label: "Cotización", variant: "default" as const },
+  programado: { color: "bg-indigo-500", label: "Programado", variant: "default" as const },
   cerrado: { color: "bg-green-500", label: "Cerrado", variant: "default" as const },
   perdido: { color: "bg-red-500", label: "Perdido", variant: "destructive" as const },
 };
