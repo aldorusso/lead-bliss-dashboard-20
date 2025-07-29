@@ -172,6 +172,15 @@ const Index = () => {
     setIsWhatsAppOpen(true);
   };
 
+  const handleCompleteSetup = () => {
+    localStorage.setItem('hasCompletedSetup', 'true');
+    setIsSetupWizardOpen(false);
+    toast({
+      title: "¡Configuración completada!",
+      description: "Tu sistema está listo para usar. ¡Comienza a gestionar tus leads!"
+    });
+  };
+
   const handleImportLeads = (importedLeads: Lead[]) => {
     setLeads(prev => [...prev, ...importedLeads]);
   };
