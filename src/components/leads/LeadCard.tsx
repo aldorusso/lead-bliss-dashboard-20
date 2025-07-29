@@ -6,6 +6,7 @@ import { Phone, Mail, Calendar, Clock } from "lucide-react";
 import { useTranslation } from "@/lib/translations";
 import { getLeadAvatar } from "@/lib/avatarUtils";
 import { getTagColor, getTagBackgroundColor } from "@/lib/tagColors";
+import { LeadPipeline } from "./LeadPipeline";
 
 export interface Comment {
   id: string;
@@ -128,6 +129,11 @@ export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails }: L
               ))}
             </div>
           )}
+        </div>
+
+        {/* Pipeline Visual */}
+        <div className="mt-3 pt-2 border-t border-border/40">
+          <LeadPipeline status={lead.status} className="justify-center" />
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-border/60">
