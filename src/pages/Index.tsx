@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LeadCard, Lead } from "@/components/leads/LeadCard";
 import { LeadList } from "@/components/leads/LeadList";
 import { LeadStats } from "@/components/leads/LeadStats";
@@ -7,6 +7,7 @@ import { GameificationBadges } from "@/components/leads/GameificationBadges";
 import { LeadForm } from "@/components/leads/LeadForm";
 import { AutomationsPanel } from "@/components/leads/AutomationsPanel";
 import { SettingsPanel } from "@/components/leads/SettingsPanel";
+import { SetupWizard } from "@/components/leads/SetupWizard";
 import { FloatingMenu } from "@/components/ui/FloatingMenu";
 import { CallModal, EmailModal } from "@/components/leads/ActionModals";
 import { WhatsAppWidget } from "@/components/leads/WhatsAppWidget";
@@ -46,6 +47,7 @@ const Index = () => {
   const [isAutomationsOpen, setIsAutomationsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false);
+  const [isSetupWizardOpen, setIsSetupWizardOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | undefined>(undefined);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,6 +58,14 @@ const Index = () => {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   
+  // Check if this is the first time using the app
+  useEffect(() => {
+    const hasCompletedSetup = localStorage.getItem('hasCompletedSetup');
+    if (!hasCompletedSetup) {
+      setIsSetupWizardOpen(true);
+    }
+  }, []);
+
   const { toast } = useToast();
 
   const filteredLeads = leads.filter(lead => {
@@ -418,6 +428,16 @@ const Index = () => {
           isOpen={isWhatsAppOpen}
           onClose={() => setIsWhatsAppOpen(false)}
           stages={stages}
+        />
+
+        {/* Setup Wizard */}
+        <SetupWizard
+          isOpen={isSetupWizardOpen}
+          onComplete={handleCompleteSetup}
+          onOpenStageManager={() => {/* Will be handled by LeadFilters */}}
+          onOpenWhatsApp={() => setIsWhatsAppOpen(true)}
+          onOpenAddLead={() => setIsFormOpen(true)}
+          onOpenAutomations={() => setIsAutomationsOpen(true)}
         />
       </div>
     </div>
