@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Phone, Mail, Calendar, Clock } from "lucide-react";
+import { MessageCircle, Mail, Calendar, Clock } from "lucide-react";
 import { useTranslation } from "@/lib/translations";
 import { getLeadAvatar } from "@/lib/avatarUtils";
 import { getTagColor, getTagBackgroundColor } from "@/lib/tagColors";
@@ -36,7 +36,7 @@ interface Stage {
 
 interface LeadCardProps {
   lead: Lead;
-  onCall?: (lead: Lead) => void;
+  onWhatsApp?: (lead: Lead) => void;
   onEmail?: (lead: Lead) => void;
   onSchedule?: (lead: Lead) => void;
   onViewDetails?: (lead: Lead) => void;
@@ -54,7 +54,7 @@ const statusConfig = {
   perdido: { color: "bg-red-500", label: "Perdido", variant: "destructive" as const },
 };
 
-export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails, onStatusClick, stages }: LeadCardProps) {
+export function LeadCard({ lead, onWhatsApp, onEmail, onSchedule, onViewDetails, onStatusClick, stages }: LeadCardProps) {
   const { t } = useTranslation();
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -110,7 +110,7 @@ export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails, onS
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center text-sm text-muted-foreground">
-            <Phone className="h-4 w-4 mr-2 text-primary/60" />
+            <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
             <span>{lead.phone}</span>
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
@@ -153,17 +153,17 @@ export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails, onS
           <div className="flex space-x-2">
             <Button 
               size="sm" 
-              variant="ghost" 
-              className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
-              onClick={() => onCall?.(lead)}
+              variant="outline" 
+              onClick={() => onWhatsApp?.(lead)}
+              className="hover:bg-green-50 hover:border-green-300 hover:text-green-700"
             >
-              <Phone className="h-4 w-4" />
+              <MessageCircle className="h-4 w-4" />
             </Button>
             <Button 
               size="sm" 
-              variant="ghost" 
-              className="h-8 w-8 p-0 hover:bg-primary/10 hover:text-primary"
+              variant="outline" 
               onClick={() => onEmail?.(lead)}
+              className="hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700"
             >
               <Mail className="h-4 w-4" />
             </Button>

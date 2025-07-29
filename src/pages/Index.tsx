@@ -94,9 +94,17 @@ const Index = () => {
     setCurrentPage(1);
   };
 
-  const handleCall = (lead: Lead) => {
-    setSelectedLead(lead);
-    setCallModalOpen(true);
+  const handleWhatsApp = (lead: Lead) => {
+    const message = encodeURIComponent(`Hola ${lead.name}, me pongo en contacto desde el CRM para dar seguimiento a tu consulta.`);
+    const phoneNumber = lead.phone.replace(/[^\d+]/g, ''); // Remove non-numeric chars except +
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+    
+    window.open(whatsappUrl, '_blank');
+    
+    toast({
+      title: "WhatsApp abierto",
+      description: `Iniciando conversación con ${lead.name}`
+    });
   };
 
   const handleEmail = (lead: Lead) => {
@@ -259,7 +267,7 @@ const Index = () => {
               <LeadCard
                 key={lead.id}
                 lead={lead}
-                onCall={handleCall}
+                onWhatsApp={handleWhatsApp}
                 onEmail={handleEmail}
                 onSchedule={handleSchedule}
                 onViewDetails={handleViewDetails}
@@ -271,7 +279,7 @@ const Index = () => {
         ) : (
           <LeadList
             leads={paginatedLeads}
-            onCall={handleCall}
+            onWhatsApp={handleWhatsApp}
             onEmail={handleEmail}
             onSchedule={handleSchedule}
             onViewDetails={handleViewDetails}
