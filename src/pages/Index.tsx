@@ -9,6 +9,7 @@ import { AutomationsPanel } from "@/components/leads/AutomationsPanel";
 import { SettingsPanel } from "@/components/leads/SettingsPanel";
 import { FloatingMenu } from "@/components/ui/FloatingMenu";
 import { CallModal, EmailModal } from "@/components/leads/ActionModals";
+import { WhatsAppWidget } from "@/components/leads/WhatsAppWidget";
 import { ViewToggle } from "@/components/leads/ViewToggle";
 import { TagsOverview } from "@/components/leads/TagsOverview";
 import { 
@@ -394,6 +395,9 @@ const Index = () => {
           onAutomationsClick={handleOpenAutomations}
           onSettingsClick={handleOpenSettings}
         />
+
+        {/* WhatsApp Widget */}
+        <WhatsAppWidget />
       </div>
     </div>
   );
