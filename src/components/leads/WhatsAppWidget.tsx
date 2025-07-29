@@ -216,7 +216,7 @@ export function WhatsAppWidget({ isOpen, onClose }: WhatsAppWidgetProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-7xl w-[95vw] h-[95vh] flex flex-col overflow-hidden p-0 gap-0">
+      <DialogContent className="max-w-none w-[98vw] h-[98vh] flex flex-col overflow-hidden p-0 gap-0">
         <DialogHeader className="p-4 sm:p-6 border-b border-border shrink-0">
           <DialogTitle className="flex items-center gap-2 text-sm sm:text-base">
             <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
