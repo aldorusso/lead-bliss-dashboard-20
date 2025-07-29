@@ -7,7 +7,7 @@ import { GameificationBadges } from "@/components/leads/GameificationBadges";
 import { LeadForm } from "@/components/leads/LeadForm";
 import { AutomationsPanel } from "@/components/leads/AutomationsPanel";
 import { SettingsPanel } from "@/components/leads/SettingsPanel";
-import { SetupWizard } from "@/components/leads/SetupWizard";
+import { SetupChecklist } from "@/components/leads/SetupChecklist";
 import { FloatingMenu } from "@/components/ui/FloatingMenu";
 import { CallModal, EmailModal } from "@/components/leads/ActionModals";
 import { WhatsAppWidget } from "@/components/leads/WhatsAppWidget";
@@ -439,8 +439,8 @@ const Index = () => {
           stages={stages}
         />
 
-        {/* Setup Wizard */}
-        <SetupWizard
+        {/* Setup Checklist */}
+        <SetupChecklist
           isOpen={isSetupWizardOpen}
           onComplete={handleCompleteSetup}
           onOpenStageManager={() => {/* Will be handled by LeadFilters */}}
