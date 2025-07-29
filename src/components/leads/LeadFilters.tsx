@@ -53,7 +53,7 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [], s
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4 bg-muted/30 border border-border/40 rounded-lg p-4">
+    <div className="flex flex-wrap items-center justify-between gap-4 bg-muted/30 border border-border/40 rounded-lg p-4" data-tour="filters">
       <div className="flex flex-wrap gap-4 items-center">
         {/* Buscador con fondo distintivo - más grande */}
         <div className="relative flex-1 min-w-96">
@@ -116,13 +116,14 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [], s
         )}
 
         {/* Gestión de Etapas */}
-        <StageManager stages={stages} onStagesChange={onStagesChange} />
+        <StageManager stages={stages} onStagesChange={onStagesChange} data-tour="stage-manager" />
       </div>
 
       {/* Botón Nuevo Lead */}
       <Button 
         onClick={onAddLead}
         className="bg-gradient-primary hover:opacity-90 transition-opacity shadow-glow whitespace-nowrap"
+        data-tour="add-lead"
       >
         <Plus className="h-4 w-4 mr-2" />
         Nuevo Lead
