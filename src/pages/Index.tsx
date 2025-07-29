@@ -238,6 +238,7 @@ const Index = () => {
           leads={leads}
           stages={stages}
           onStagesChange={setStages}
+          onImportLeads={handleImportLeads}
         />
 
         {/* View Controls */}

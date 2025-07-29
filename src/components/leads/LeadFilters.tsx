@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { Search, Filter, X, Plus } from "lucide-react";
 import { StageManager } from "./StageManager";
+import { CsvManager } from "./CsvManager";
 
 interface FilterState {
   search: string;
@@ -31,9 +32,10 @@ interface LeadFiltersProps {
   leads?: any[]; // Para calcular los contadores
   stages: Stage[];
   onStagesChange: (stages: Stage[]) => void;
+  onImportLeads?: (leads: any[]) => void;
 }
 
-export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [], stages, onStagesChange }: LeadFiltersProps) {
+export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [], stages, onStagesChange, onImportLeads }: LeadFiltersProps) {
   const updateFilter = (key: keyof FilterState, value: string) => {
     onFiltersChange({ ...filters, [key]: value });
   };
@@ -115,8 +117,11 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [], s
           </div>
         )}
 
-        {/* Gestión de Etapas */}
-        <StageManager stages={stages} onStagesChange={onStagesChange} data-tour="stage-manager" />
+        {/* Gestión de Etapas y CSV */}
+        <div className="flex gap-2">
+          <StageManager stages={stages} onStagesChange={onStagesChange} />
+          <CsvManager leads={leads} onImportLeads={onImportLeads || (() => {})} />
+        </div>
       </div>
 
       {/* Botón Nuevo Lead */}
