@@ -190,7 +190,11 @@ const Index = () => {
         <LeadStats leads={leads} />
 
         {/* Tags Overview */}
-        <TagsOverview leads={leads} />
+        <TagsOverview 
+          leads={leads} 
+          onTagClick={(tag) => handleFiltersChange({ ...filters, tags: filters.tags === tag ? "all" : tag })}
+          selectedTag={filters.tags !== "all" ? filters.tags : undefined}
+        />
 
         {/* Gamification Badges (invisible - only shows toasts) */}
         <GameificationBadges leads={leads} />

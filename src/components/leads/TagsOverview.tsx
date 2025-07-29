@@ -6,9 +6,11 @@ import { Tag } from "lucide-react";
 
 interface TagsOverviewProps {
   leads: Lead[];
+  onTagClick?: (tag: string) => void;
+  selectedTag?: string;
 }
 
-export function TagsOverview({ leads }: TagsOverviewProps) {
+export function TagsOverview({ leads, onTagClick, selectedTag }: TagsOverviewProps) {
   // Calcular estadísticas de etiquetas
   const tagStats = leads.reduce((acc, lead) => {
     if (lead.tags) {
@@ -41,31 +43,43 @@ export function TagsOverview({ leads }: TagsOverviewProps) {
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
-        {sortedTags.map(([tag, count]) => (
-          <div
-            key={tag}
-            className="group flex items-center justify-between bg-background/60 hover:bg-background border border-border/60 rounded-md px-2 py-1.5 transition-all duration-200 hover:shadow-sm"
-          >
-            <div className="flex items-center min-w-0">
-              <div 
-                className="w-2 h-2 rounded-full mr-2 flex-shrink-0"
-                style={{ backgroundColor: getTagColor(tag) }}
-              />
-              <span className="text-xs text-foreground truncate font-medium">
-                {tag}
-              </span>
-            </div>
-            <span 
-              className="text-xs font-semibold ml-1 px-1.5 py-0.5 rounded-full flex-shrink-0"
-              style={{
-                backgroundColor: `${getTagColor(tag)}15`,
-                color: getTagColor(tag),
-              }}
+        {sortedTags.map(([tag, count]) => {
+          const isSelected = selectedTag === tag;
+          return (
+            <button
+              key={tag}
+              onClick={() => onTagClick?.(tag)}
+              className={`group flex items-center justify-between border rounded-md px-2 py-1.5 transition-all duration-200 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 ${
+                isSelected 
+                  ? 'bg-primary/10 border-primary/40 shadow-sm' 
+                  : 'bg-background/60 hover:bg-background border-border/60'
+              }`}
             >
-              {count}
-            </span>
-          </div>
-        ))}
+              <div className="flex items-center min-w-0">
+                <div 
+                  className="w-2 h-2 rounded-full mr-2 flex-shrink-0"
+                  style={{ backgroundColor: getTagColor(tag) }}
+                />
+                <span className={`text-xs truncate font-medium ${
+                  isSelected ? 'text-primary' : 'text-foreground'
+                }`}>
+                  {tag}
+                </span>
+              </div>
+              <span 
+                className={`text-xs font-semibold ml-1 px-1.5 py-0.5 rounded-full flex-shrink-0 ${
+                  isSelected ? 'font-bold' : ''
+                }`}
+                style={{
+                  backgroundColor: isSelected ? getTagColor(tag) : `${getTagColor(tag)}15`,
+                  color: isSelected ? 'white' : getTagColor(tag),
+                }}
+              >
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
       
       {Object.keys(tagStats).length > 12 && (
