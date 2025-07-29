@@ -34,6 +34,7 @@ interface LeadCardProps {
   onEmail?: (lead: Lead) => void;
   onSchedule?: (lead: Lead) => void;
   onViewDetails?: (lead: Lead) => void;
+  onStatusClick?: (status: Lead["status"]) => void;
 }
 
 const statusConfig = {
@@ -46,7 +47,7 @@ const statusConfig = {
   perdido: { color: "bg-red-500", label: "Perdido", variant: "destructive" as const },
 };
 
-export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails }: LeadCardProps) {
+export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails, onStatusClick }: LeadCardProps) {
   const { t } = useTranslation();
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -133,7 +134,11 @@ export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails }: L
 
         {/* Pipeline Visual */}
         <div className="mt-3 pt-2 border-t border-border/40">
-          <LeadPipeline status={lead.status} className="justify-center" />
+          <LeadPipeline 
+            status={lead.status} 
+            className="justify-center" 
+            onStatusClick={onStatusClick}
+          />
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-border/60">

@@ -3,6 +3,7 @@ import { Lead } from "./LeadCard";
 interface LeadPipelineProps {
   status: Lead["status"];
   className?: string;
+  onStatusClick?: (status: Lead["status"]) => void;
 }
 
 const pipelineStages = [
@@ -14,7 +15,7 @@ const pipelineStages = [
   { key: "cerrado", label: "Cerrado", color: "bg-green-400" },
 ] as const;
 
-export function LeadPipeline({ status, className = "" }: LeadPipelineProps) {
+export function LeadPipeline({ status, className = "", onStatusClick }: LeadPipelineProps) {
   // Encontrar el índice de la etapa actual
   const currentStageIndex = pipelineStages.findIndex(stage => stage.key === status);
   
@@ -47,16 +48,17 @@ export function LeadPipeline({ status, className = "" }: LeadPipelineProps) {
 
         return (
           <div key={stage.key} className="flex items-center">
-            {/* Punto de etapa */}
-            <div 
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-200 ${
+            {/* Punto de etapa clicable */}
+            <button
+              onClick={() => onStatusClick?.(stage.key)}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-200 hover:scale-125 focus:outline-none focus:ring-2 focus:ring-primary/30 ${
                 isCurrent 
                   ? `${stage.color} ring-2 ring-white shadow-sm scale-110` 
                   : isCompleted 
-                    ? stage.color 
-                    : "bg-muted border border-border"
+                    ? `${stage.color} hover:opacity-80` 
+                    : "bg-muted border border-border hover:bg-muted-foreground/20"
               }`}
-              title={stage.label}
+              title={`Filtrar por: ${stage.label}`}
             />
             
             {/* Línea conectora */}

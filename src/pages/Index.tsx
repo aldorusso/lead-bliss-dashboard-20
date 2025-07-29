@@ -229,6 +229,7 @@ const Index = () => {
                 onEmail={handleEmail}
                 onSchedule={handleSchedule}
                 onViewDetails={handleViewDetails}
+                onStatusClick={(status) => handleFiltersChange({ ...filters, status: filters.status === status ? "all" : status })}
               />
             ))}
           </div>
@@ -239,6 +240,7 @@ const Index = () => {
             onEmail={handleEmail}
             onSchedule={handleSchedule}
             onViewDetails={handleViewDetails}
+            onStatusClick={(status) => handleFiltersChange({ ...filters, status: filters.status === status ? "all" : status })}
           />
         )}
 

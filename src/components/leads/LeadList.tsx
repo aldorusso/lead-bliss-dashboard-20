@@ -20,6 +20,7 @@ interface LeadListProps {
   onEmail?: (lead: Lead) => void;
   onSchedule?: (lead: Lead) => void;
   onViewDetails?: (lead: Lead) => void;
+  onStatusClick?: (status: Lead["status"]) => void;
 }
 
 const statusConfig = {
@@ -32,7 +33,7 @@ const statusConfig = {
   perdido: { color: "bg-red-500", label: "Perdido", variant: "destructive" as const },
 };
 
-export function LeadList({ leads, onCall, onEmail, onSchedule, onViewDetails }: LeadListProps) {
+export function LeadList({ leads, onCall, onEmail, onSchedule, onViewDetails, onStatusClick }: LeadListProps) {
   const { t } = useTranslation();
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -73,9 +74,14 @@ export function LeadList({ leads, onCall, onEmail, onSchedule, onViewDetails }: 
                 <TableCell className="text-muted-foreground">{lead.email}</TableCell>
                 <TableCell className="text-muted-foreground">{lead.phone}</TableCell>
                 <TableCell>
-                  <Badge variant={statusInfo.variant} className="font-medium">
-                    {t(statusInfo.label.toLowerCase())}
-                  </Badge>
+                  <button 
+                    onClick={() => onStatusClick?.(lead.status)}
+                    className="transition-transform hover:scale-105"
+                  >
+                    <Badge variant={statusInfo.variant} className="font-medium cursor-pointer hover:opacity-80">
+                      {t(statusInfo.label.toLowerCase())}
+                    </Badge>
+                  </button>
                 </TableCell>
                 <TableCell>
                   {lead.tags && lead.tags.length > 0 ? (
