@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Phone, Mail, Calendar, Clock } from "lucide-react";
 import { useTranslation } from "@/lib/translations";
 import { getLeadAvatar } from "@/lib/avatarUtils";
+import { getTagColor, getTagBackgroundColor } from "@/lib/tagColors";
 
 export interface Comment {
   id: string;
@@ -112,7 +113,16 @@ export function LeadCard({ lead, onCall, onEmail, onSchedule, onViewDetails }: L
           {lead.tags && lead.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
               {lead.tags.map((tag, index) => (
-                <Badge key={index} variant="secondary" className="text-xs">
+                <Badge 
+                  key={index} 
+                  variant="secondary" 
+                  className="text-xs font-medium"
+                  style={{
+                    backgroundColor: getTagBackgroundColor(tag),
+                    color: getTagColor(tag),
+                    border: `1px solid ${getTagColor(tag)}20`,
+                  }}
+                >
                   {tag}
                 </Badge>
               ))}

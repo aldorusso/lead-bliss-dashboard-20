@@ -10,6 +10,7 @@ import { SettingsPanel } from "@/components/leads/SettingsPanel";
 import { FloatingMenu } from "@/components/ui/FloatingMenu";
 import { CallModal, EmailModal } from "@/components/leads/ActionModals";
 import { ViewToggle } from "@/components/leads/ViewToggle";
+import { TagsOverview } from "@/components/leads/TagsOverview";
 import { 
   Pagination, 
   PaginationContent, 
@@ -187,6 +188,9 @@ const Index = () => {
 
         {/* Stats */}
         <LeadStats leads={leads} />
+
+        {/* Tags Overview */}
+        <TagsOverview leads={leads} />
 
         {/* Gamification Badges (invisible - only shows toasts) */}
         <GameificationBadges leads={leads} />

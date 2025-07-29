@@ -42,6 +42,7 @@ export function LeadForm({ isOpen, onClose, onSave, lead, mode }: LeadFormProps)
 
   const [newComment, setNewComment] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>(lead?.tags || []);
+  const [tagsInput, setTagsInput] = useState<string>((lead?.tags || []).join(", "));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
@@ -56,6 +57,7 @@ export function LeadForm({ isOpen, onClose, onSave, lead, mode }: LeadFormProps)
         status: lead.status || "nuevo",
       });
       setSelectedTags(lead.tags || []);
+      setTagsInput((lead.tags || []).join(", "));
     } else if (mode === "create") {
       // Reset form for creating new lead
       setFormData({
@@ -65,6 +67,7 @@ export function LeadForm({ isOpen, onClose, onSave, lead, mode }: LeadFormProps)
         status: "nuevo",
       });
       setSelectedTags([]);
+      setTagsInput("");
     }
   }, [lead, mode]);
 
@@ -95,9 +98,15 @@ export function LeadForm({ isOpen, onClose, onSave, lead, mode }: LeadFormProps)
     e.preventDefault();
     
     if (validateForm()) {
+      // Procesar las etiquetas del input de texto
+      const processedTags = tagsInput
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(tag => tag.length > 0);
+      
       const updatedLead = {
         ...formData,
-        tags: selectedTags,
+        tags: processedTags,
         id: lead?.id || Date.now().toString(),
         lastContact: mode === "create" ? "Ahora" : lead?.lastContact,
         comments: lead?.comments || [],
@@ -126,9 +135,15 @@ export function LeadForm({ isOpen, onClose, onSave, lead, mode }: LeadFormProps)
 
     const updatedComments = [...(lead?.comments || []), comment];
     
+    // Procesar las etiquetas del input de texto
+    const processedTags = tagsInput
+      .split(",")
+      .map(tag => tag.trim())
+      .filter(tag => tag.length > 0);
+
     onSave({
       ...formData,
-      tags: selectedTags,
+      tags: processedTags,
       id: lead?.id || Date.now().toString(),
       lastContact: lead?.lastContact || "Ahora",
       comments: updatedComments,
@@ -150,6 +165,7 @@ export function LeadForm({ isOpen, onClose, onSave, lead, mode }: LeadFormProps)
     });
     setNewComment("");
     setSelectedTags([]);
+    setTagsInput("");
     setErrors({});
     onClose();
   };
@@ -165,14 +181,14 @@ export function LeadForm({ isOpen, onClose, onSave, lead, mode }: LeadFormProps)
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
-  const availableTags = ["premium", "startup", "empresa", "urgente", "demo", "presupuesto"];
-
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
-    );
+  const handleTagsInputChange = (value: string) => {
+    setTagsInput(value);
+    // Actualizar selectedTags en tiempo real para la vista previa
+    const processedTags = value
+      .split(",")
+      .map(tag => tag.trim())
+      .filter(tag => tag.length > 0);
+    setSelectedTags(processedTags);
   };
 
   const statusOptions = [
@@ -331,26 +347,14 @@ export function LeadForm({ isOpen, onClose, onSave, lead, mode }: LeadFormProps)
               <Tag className="h-4 w-4 mr-2 text-primary" />
               Etiquetas
             </Label>
-            <div className="flex flex-wrap gap-2">
-              {availableTags.map((tag) => (
-                <Button
-                  key={tag}
-                  type="button"
-                  variant={selectedTags.includes(tag) ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => toggleTag(tag)}
-                  className={`text-xs ${
-                    selectedTags.includes(tag) 
-                      ? "bg-primary text-primary-foreground" 
-                      : "hover:bg-accent"
-                  }`}
-                >
-                  {tag}
-                </Button>
-              ))}
-            </div>
+            <Input
+              value={tagsInput}
+              onChange={(e) => handleTagsInputChange(e.target.value)}
+              placeholder="Ej: botox, urgente, primera-vez"
+              className="bg-background border-border/60 focus:border-primary transition-colors"
+            />
             <p className="text-xs text-muted-foreground">
-              Selecciona las etiquetas que describen mejor a este lead
+              Separa las etiquetas con comas. Ej: botox, urgente, primera-vez
             </p>
           </div>
 
