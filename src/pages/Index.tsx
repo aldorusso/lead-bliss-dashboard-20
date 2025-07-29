@@ -107,6 +107,15 @@ const Index = () => {
     });
   };
 
+  const handleWhatsAppAPI = (lead: Lead) => {
+    // Por ahora mostrar placeholder - se implementará con API de WhatsApp
+    toast({
+      title: "API WhatsApp",
+      description: `Función en desarrollo - Enviar mensaje a ${lead.name} vía API WhatsApp`,
+      variant: "default"
+    });
+  };
+
   const handleEmail = (lead: Lead) => {
     setSelectedLead(lead);
     setEmailModalOpen(true);
@@ -268,6 +277,7 @@ const Index = () => {
                 key={lead.id}
                 lead={lead}
                 onWhatsApp={handleWhatsApp}
+                onWhatsAppAPI={handleWhatsAppAPI}
                 onEmail={handleEmail}
                 onSchedule={handleSchedule}
                 onViewDetails={handleViewDetails}
@@ -280,6 +290,7 @@ const Index = () => {
           <LeadList
             leads={paginatedLeads}
             onWhatsApp={handleWhatsApp}
+            onWhatsAppAPI={handleWhatsAppAPI}
             onEmail={handleEmail}
             onSchedule={handleSchedule}
             onViewDetails={handleViewDetails}
