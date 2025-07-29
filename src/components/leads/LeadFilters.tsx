@@ -50,8 +50,9 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [] }:
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-        <div className="relative flex-1 w-full lg:max-w-none">
+      {/* Primera línea: Búsqueda más compacta */}
+      <div className="flex items-center gap-4">
+        <div className="relative w-80">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             placeholder="Buscar leads..."
@@ -60,21 +61,15 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [] }:
             className="pl-10 bg-background border-border/60 focus:border-primary transition-colors"
           />
         </div>
-        
-        <Button 
-          onClick={onAddLead}
-          className="bg-gradient-primary hover:opacity-90 transition-opacity shadow-glow whitespace-nowrap"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Nuevo Lead
-        </Button>
       </div>
 
-      <div className="flex flex-wrap gap-3 items-center">
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Filtros:</span>
-        </div>
+      {/* Segunda línea: Filtros y botón nuevo lead */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-3 items-center">
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Filtros:</span>
+          </div>
 
         <Select value={filters.status} onValueChange={(value) => updateFilter("status", value)}>
           <SelectTrigger className="w-40 bg-background border-border/60">
@@ -93,34 +88,44 @@ export function LeadFilters({ filters, onFiltersChange, onAddLead, leads = [] }:
         </Select>
 
 
-        <Select value={filters.dateRange} onValueChange={(value) => updateFilter("dateRange", value)}>
-          <SelectTrigger className="w-40 bg-background border-border/60">
-            <SelectValue placeholder="Período" />
-          </SelectTrigger>
-          <SelectContent className="bg-popover border-border/60">
-            <SelectItem value="all">Todo el tiempo</SelectItem>
-            <SelectItem value="today">Hoy</SelectItem>
-            <SelectItem value="week">Esta semana</SelectItem>
-            <SelectItem value="month">Este mes</SelectItem>
-            <SelectItem value="quarter">Este trimestre</SelectItem>
-          </SelectContent>
-        </Select>
+          <Select value={filters.dateRange} onValueChange={(value) => updateFilter("dateRange", value)}>
+            <SelectTrigger className="w-40 bg-background border-border/60">
+              <SelectValue placeholder="Período" />
+            </SelectTrigger>
+            <SelectContent className="bg-popover border-border/60">
+              <SelectItem value="all">Todo el tiempo</SelectItem>
+              <SelectItem value="today">Hoy</SelectItem>
+              <SelectItem value="week">Esta semana</SelectItem>
+              <SelectItem value="month">Este mes</SelectItem>
+              <SelectItem value="quarter">Este trimestre</SelectItem>
+            </SelectContent>
+          </Select>
 
-        {activeFiltersCount > 0 && (
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs">
-              {activeFiltersCount} filtro{activeFiltersCount !== 1 ? 's' : ''} activo{activeFiltersCount !== 1 ? 's' : ''}
-            </Badge>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={clearFilters}
-              className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
-            >
-              <X className="h-3 w-3" />
-            </Button>
-          </div>
-        )}
+          {activeFiltersCount > 0 && (
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="text-xs">
+                {activeFiltersCount} filtro{activeFiltersCount !== 1 ? 's' : ''} activo{activeFiltersCount !== 1 ? 's' : ''}
+              </Badge>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={clearFilters}
+                className="h-6 w-6 p-0 hover:bg-destructive/10 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Botón Nuevo Lead */}
+        <Button 
+          onClick={onAddLead}
+          className="bg-gradient-primary hover:opacity-90 transition-opacity shadow-glow whitespace-nowrap"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Nuevo Lead
+        </Button>
       </div>
     </div>
   );
