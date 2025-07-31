@@ -131,60 +131,71 @@ export function FloatingMenu({ userName = "Usuario", userAvatar, onAutomationsCl
         />
       )}
 
-      {/* Menu Items */}
+      {/* Menu Items Panel - Lovable Style */}
       <div className="relative">
         {isOpen && (
-          <div className="absolute bottom-16 right-0 space-y-3 animate-fade-in">
-            {menuItems.map((item, index) => {
-              const Icon = item.icon;
-              return (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-end group animate-scale-in"
-                  style={{ 
-                    animationDelay: `${index * 0.1}s`,
-                    animationFillMode: "both"
-                  }}
-                >
-                  {/* Label */}
-                  <div className="bg-background/95 backdrop-blur-sm border border-border/60 rounded-lg px-3 py-2 mr-3 shadow-card opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    <span className="text-sm font-medium text-foreground whitespace-nowrap">
-                      {item.label}
-                    </span>
-                  </div>
-                  
-                  {/* Button */}
+          <div className="absolute bottom-20 right-0 w-80 bg-background/95 backdrop-blur-sm border border-border/60 rounded-2xl shadow-2xl animate-fade-in p-6">
+            {/* Project Header */}
+            <div className="mb-6 pb-4 border-b border-border/40">
+              <h3 className="text-lg font-semibold text-foreground mb-1">EstetiQ.net</h3>
+              <p className="text-sm text-muted-foreground">Sistema de gestión de leads</p>
+            </div>
+            
+            {/* Menu Items Grid */}
+            <div className="grid grid-cols-2 gap-3">
+              {menuItems.map((item, index) => {
+                const Icon = item.icon;
+                return (
                   <Button
-                    size="sm"
+                    key={item.id}
+                    variant="ghost"
                     onClick={item.onClick}
-                    className="h-12 w-12 rounded-full bg-background/95 backdrop-blur-sm border border-border/60 shadow-card hover:shadow-hover hover:scale-110 transition-all duration-200 p-0"
+                    className="h-16 flex flex-col items-center justify-center gap-2 hover:bg-muted/50 rounded-xl animate-scale-in"
+                    style={{ 
+                      animationDelay: `${index * 0.05}s`,
+                      animationFillMode: "both"
+                    }}
                   >
                     <Icon className="h-5 w-5 text-foreground" />
+                    <span className="text-xs font-medium text-foreground text-center leading-tight">
+                      {item.label}
+                    </span>
                   </Button>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
+            
+            {/* Close Button */}
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setIsOpen(false)}
+              className="absolute top-3 right-3 h-8 w-8 p-0 rounded-full hover:bg-muted/50"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
         )}
 
-        {/* Main Button */}
+        {/* Main Button - Larger Lovable Style */}
         <Button
           onClick={toggleMenu}
-          className={`h-14 w-14 rounded-full shadow-glow hover:shadow-hover transition-all duration-300 p-0 ${
-            isOpen ? "rotate-45 scale-110" : "hover:scale-105"
-          } ${theme === 'dark' ? 'bg-gray-800 border border-gray-600' : 'bg-gradient-primary'}`}
-          style={{
-            backgroundColor: theme === 'dark' ? '#1f2937' : undefined,
-            borderColor: theme === 'dark' ? '#4b5563' : undefined
-          }}
+          className={`h-16 w-16 rounded-2xl shadow-2xl hover:shadow-glow transition-all duration-300 p-0 ${
+            isOpen ? "scale-105" : "hover:scale-105"
+          } bg-gradient-primary hover:bg-gradient-primary/90`}
         >
           {isOpen ? (
-            <X className={`h-6 w-6 ${theme === 'dark' ? 'text-white' : 'text-primary-foreground'}`} />
-          ) : (
-            <Avatar className="h-8 w-8">
+            <Avatar className="h-10 w-10">
               <AvatarImage src={userAvatar || generateDiceBearAvatar(userName)} alt={userName} />
-              <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground text-sm font-semibold">
-                {userName.split(' ').map(n => n[0]).join('').toUpperCase()}
+              <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground text-lg font-bold">
+                E
+              </AvatarFallback>
+            </Avatar>
+          ) : (
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={userAvatar || generateDiceBearAvatar(userName)} alt={userName} />
+              <AvatarFallback className="bg-primary-foreground/20 text-primary-foreground text-lg font-bold">
+                E
               </AvatarFallback>
             </Avatar>
           )}
