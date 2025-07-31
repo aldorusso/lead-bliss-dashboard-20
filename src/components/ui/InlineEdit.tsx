@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Check, X, Edit3 } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface InlineEditProps {
@@ -96,13 +96,12 @@ export function InlineEdit({
   return (
     <div 
       className={cn(
-        "group cursor-pointer hover:bg-muted/50 rounded px-1 py-0.5 transition-colors flex items-center space-x-1",
+        "cursor-pointer hover:bg-muted/50 rounded px-1 py-0.5 transition-colors",
         className
       )}
       onClick={() => setIsEditing(true)}
     >
-      <span className="flex-1">{value}</span>
-      <Edit3 className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground" />
+      <span>{value}</span>
     </div>
   );
 }
