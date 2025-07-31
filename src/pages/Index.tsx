@@ -9,6 +9,7 @@ import { LeadForm } from "@/components/leads/LeadForm";
 import { AutomationsPanel } from "@/components/leads/AutomationsPanel";
 import { SettingsPanel } from "@/components/leads/SettingsPanel";
 import { GuidedTour } from "@/components/leads/GuidedTour";
+import { BulkActionsMenu } from "@/components/leads/BulkActionsMenu";
 import { FloatingMenu } from "@/components/ui/FloatingMenu";
 import { CallModal, EmailModal } from "@/components/leads/ActionModals";
 import { WhatsAppWidget } from "@/components/leads/WhatsAppWidget";
@@ -53,6 +54,7 @@ const Index = () => {
   const [isSetupWizardOpen, setIsSetupWizardOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | undefined>(undefined);
   const [view, setView] = useState<"grid" | "list">("grid");
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const leadsPerPage = 12;
   
@@ -126,6 +128,8 @@ const Index = () => {
     if (activeStatFilter) {
       setActiveStatFilter(null);
     }
+    // Clear selections when filters change
+    setSelectedLeads([]);
   };
 
   const handleStatClick = (filterType: 'active' | 'new' | 'conversion' | 'needsFollowUp') => {
@@ -143,6 +147,8 @@ const Index = () => {
       });
     }
     setCurrentPage(1);
+    // Clear selections when filters change
+    setSelectedLeads([]);
   };
 
   const handleWhatsApp = (lead: Lead) => {
@@ -274,6 +280,84 @@ const Index = () => {
     }));
   };
 
+  // Bulk actions handlers
+  const handleLeadSelection = (leadId: string, selected: boolean) => {
+    setSelectedLeads(prev => 
+      selected 
+        ? [...prev, leadId]
+        : prev.filter(id => id !== leadId)
+    );
+  };
+
+  const handleSelectAll = (selected: boolean) => {
+    setSelectedLeads(selected ? paginatedLeads.map(lead => lead.id) : []);
+  };
+
+  const handleClearSelection = () => {
+    setSelectedLeads([]);
+  };
+
+  const handleBulkDelete = (leadIds: string[]) => {
+    setLeads(prev => prev.filter(lead => !leadIds.includes(lead.id)));
+    setSelectedLeads([]);
+    toast({
+      title: "Leads eliminados",
+      description: `${leadIds.length} leads han sido eliminados`,
+    });
+  };
+
+  const handleBulkStatusChange = (leadIds: string[], status: Lead["status"]) => {
+    setLeads(prev => prev.map(lead => 
+      leadIds.includes(lead.id) 
+        ? { ...lead, status, lastContact: "Ahora" }
+        : lead
+    ));
+    setSelectedLeads([]);
+    toast({
+      title: "Estado actualizado",
+      description: `${leadIds.length} leads movidos a ${status}`,
+    });
+  };
+
+  const handleBulkEmail = (leads: Lead[]) => {
+    toast({
+      title: "Email masivo",
+      description: `Preparando email para ${leads.length} leads`,
+    });
+  };
+
+  const handleBulkWhatsApp = (leads: Lead[]) => {
+    toast({
+      title: "WhatsApp masivo",
+      description: `Preparando mensajes para ${leads.length} leads`,
+    });
+  };
+
+  const handleBulkAddTags = (leadIds: string[], tags: string[]) => {
+    setLeads(prev => prev.map(lead => 
+      leadIds.includes(lead.id) 
+        ? { ...lead, tags: [...(lead.tags || []), ...tags].filter((tag, index, arr) => arr.indexOf(tag) === index) }
+        : lead
+    ));
+    setSelectedLeads([]);
+    toast({
+      title: "Etiquetas agregadas",
+      description: `Etiquetas agregadas a ${leadIds.length} leads`,
+    });
+  };
+
+  const handleUpdateLead = (leadId: string, field: string, value: string | string[]) => {
+    setLeads(prev => prev.map(lead => 
+      lead.id === leadId 
+        ? { ...lead, [field]: value, lastContact: field !== 'tags' ? "Ahora" : lead.lastContact }
+        : lead
+    ));
+    toast({
+      title: "Lead actualizado",
+      description: `Campo ${field} actualizado`,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6 space-y-8">
@@ -359,7 +443,7 @@ const Index = () => {
               handleFiltersChange({ ...filters, status: filters.status === status ? "all" : status });
               setActiveStatFilter(null); // Clear stat filter when using status filter
             }}
-                stages={stages}
+                onUpdateLead={handleUpdateLead}
               />
             ))}
           </div>
@@ -371,10 +455,15 @@ const Index = () => {
             onEmail={handleEmail}
             onSchedule={handleSchedule}
             onViewDetails={handleViewDetails}
-                onStatusClick={(status) => {
-                  handleFiltersChange({ ...filters, status: filters.status === status ? "all" : status });
-                  setActiveStatFilter(null); // Clear stat filter when using status filter
-                }}
+            onStatusClick={(status) => {
+              handleFiltersChange({ ...filters, status: filters.status === status ? "all" : status });
+              setActiveStatFilter(null); // Clear stat filter when using status filter
+            }}
+            onUpdateLead={handleUpdateLead}
+            selectedLeads={selectedLeads}
+            onLeadSelection={handleLeadSelection}
+            onSelectAll={handleSelectAll}
+            enableBulkActions={true}
           />
         )}
 
@@ -482,6 +571,17 @@ const Index = () => {
           </div>
         )}
 
+        {/* Bulk Actions Menu */}
+        <BulkActionsMenu
+          selectedLeads={selectedLeads.map(id => leads.find(lead => lead.id === id)!).filter(Boolean)}
+          onClearSelection={handleClearSelection}
+          onDeleteLeads={handleBulkDelete}
+          onChangeStatus={handleBulkStatusChange}
+          onBulkEmail={handleBulkEmail}
+          onBulkWhatsApp={handleBulkWhatsApp}
+          onAddTags={handleBulkAddTags}
+        />
+
         {/* Lead Form */}
         <LeadForm
           isOpen={isFormOpen}
@@ -520,6 +620,7 @@ const Index = () => {
           lead={selectedLead}
           onSave={handleSaveNote}
         />
+
 
         {/* Floating Menu */}
         <FloatingMenu 

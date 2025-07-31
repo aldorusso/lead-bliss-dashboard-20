@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { InlineEdit } from "@/components/ui/InlineEdit";
 import { StatusSelect } from "@/components/ui/StatusSelect";
@@ -27,6 +28,10 @@ interface LeadListProps {
   onViewDetails?: (lead: Lead) => void;
   onStatusClick?: (status: Lead["status"]) => void;
   onUpdateLead?: (leadId: string, field: string, value: string | string[]) => void;
+  selectedLeads?: string[];
+  onLeadSelection?: (leadId: string, selected: boolean) => void;
+  onSelectAll?: (selected: boolean) => void;
+  enableBulkActions?: boolean;
 }
 
 const statusConfig = {
@@ -39,7 +44,20 @@ const statusConfig = {
   perdido: { color: "bg-red-500", label: "Perdido", variant: "destructive" as const },
 };
 
-export function LeadList({ leads, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule, onViewDetails, onStatusClick, onUpdateLead }: LeadListProps) {
+export function LeadList({ 
+  leads, 
+  onWhatsApp, 
+  onWhatsAppAPI, 
+  onEmail, 
+  onSchedule, 
+  onViewDetails, 
+  onStatusClick, 
+  onUpdateLead,
+  selectedLeads = [],
+  onLeadSelection,
+  onSelectAll,
+  enableBulkActions = false
+}: LeadListProps) {
   const { t } = useTranslation();
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -57,11 +75,24 @@ export function LeadList({ leads, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule
     handleFieldUpdate(leadId, 'tags', tags);
   };
 
+  const allSelected = enableBulkActions && leads.length > 0 && leads.every(lead => selectedLeads.includes(lead.id));
+  const someSelected = enableBulkActions && selectedLeads.length > 0 && !allSelected;
+
   return (
     <div className="rounded-md border bg-card">
       <Table>
         <TableHeader>
           <TableRow>
+            {enableBulkActions && (
+              <TableHead className="w-12">
+                <Checkbox
+                  checked={allSelected}
+                  onCheckedChange={(checked) => onSelectAll?.(!!checked)}
+                  className={someSelected ? "data-[state=checked]:bg-primary data-[state=checked]:border-primary" : ""}
+                  style={someSelected ? { backgroundColor: "hsl(var(--primary))", opacity: 0.5 } : {}}
+                />
+              </TableHead>
+            )}
             <TableHead className="w-[200px]">Lead</TableHead>
             <TableHead>{t('email')}</TableHead>
             <TableHead>WhatsApp</TableHead>
@@ -75,8 +106,20 @@ export function LeadList({ leads, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule
         <TableBody>
           {leads.map((lead) => {
             const statusInfo = statusConfig[lead.status];
+            const isSelected = selectedLeads.includes(lead.id);
             return (
-              <TableRow key={lead.id} className="hover:bg-muted/50">
+              <TableRow 
+                key={lead.id} 
+                className={`hover:bg-muted/50 ${isSelected ? 'bg-muted/30 border-l-4 border-l-primary' : ''}`}
+              >
+                {enableBulkActions && (
+                  <TableCell>
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={(checked) => onLeadSelection?.(lead.id, !!checked)}
+                    />
+                  </TableCell>
+                )}
                 <TableCell className="font-medium">
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-10 w-10 ring-2 ring-primary/20">
