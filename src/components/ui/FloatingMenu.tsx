@@ -131,49 +131,26 @@ export function FloatingMenu({ userName = "Usuario", userAvatar, onAutomationsCl
         />
       )}
 
-      {/* Menu Items Panel - Lovable Style */}
+      {/* Menu Items Panel - Simple Style */}
       <div className="relative">
         {isOpen && (
-          <div className="absolute bottom-20 right-0 w-80 bg-background/95 backdrop-blur-sm border border-border/60 rounded-2xl shadow-2xl animate-fade-in p-6">
-            {/* Project Header */}
-            <div className="mb-6 pb-4 border-b border-border/40">
-              <h3 className="text-lg font-semibold text-foreground mb-1">EstetiQ.net</h3>
-              <p className="text-sm text-muted-foreground">Sistema de gestión de leads</p>
-            </div>
-            
-            {/* Menu Items Grid */}
-            <div className="grid grid-cols-2 gap-3">
-              {menuItems.map((item, index) => {
+          <div className="absolute bottom-20 right-0 w-56 bg-background border border-border rounded-lg shadow-lg animate-fade-in">
+            <div className="py-2">
+              {menuItems.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Button
                     key={item.id}
                     variant="ghost"
                     onClick={item.onClick}
-                    className="h-16 flex flex-col items-center justify-center gap-2 hover:bg-muted/50 rounded-xl animate-scale-in"
-                    style={{ 
-                      animationDelay: `${index * 0.05}s`,
-                      animationFillMode: "both"
-                    }}
+                    className="w-full justify-start h-10 px-4 rounded-none hover:bg-muted"
                   >
-                    <Icon className="h-5 w-5 text-foreground" />
-                    <span className="text-xs font-medium text-foreground text-center leading-tight">
-                      {item.label}
-                    </span>
+                    <Icon className="h-4 w-4 mr-3" />
+                    <span className="text-sm">{item.label}</span>
                   </Button>
                 );
               })}
             </div>
-            
-            {/* Close Button */}
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => setIsOpen(false)}
-              className="absolute top-3 right-3 h-8 w-8 p-0 rounded-full hover:bg-muted/50"
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         )}
 
