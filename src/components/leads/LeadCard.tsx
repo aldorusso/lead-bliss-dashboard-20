@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { InlineEdit } from "@/components/ui/InlineEdit";
+import { StatusSelect } from "@/components/ui/StatusSelect";
+import { TagsSelect } from "@/components/ui/TagsSelect";
 import { MessageCircle, Mail, Calendar, Clock, MessageSquare } from "lucide-react";
 import { useTranslation } from "@/lib/translations";
 import { getLeadAvatar } from "@/lib/avatarUtils";
@@ -44,7 +46,7 @@ interface LeadCardProps {
   onSchedule?: (lead: Lead) => void;
   onViewDetails?: (lead: Lead) => void;
   onStatusClick?: (status: Lead["status"]) => void;
-  onUpdateLead?: (leadId: string, field: string, value: string) => void;
+  onUpdateLead?: (leadId: string, field: string, value: string | string[]) => void;
   stages?: Stage[];
 }
 
@@ -78,8 +80,16 @@ export function LeadCard({ lead, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule,
     return false;
   };
 
-  const handleFieldUpdate = (field: string, value: string) => {
+  const handleFieldUpdate = (field: string, value: string | string[]) => {
     onUpdateLead?.(lead.id, field, value);
+  };
+
+  const handleStatusChange = (status: Lead["status"]) => {
+    handleFieldUpdate('status', status);
+  };
+
+  const handleTagsChange = (tags: string[]) => {
+    handleFieldUpdate('tags', tags);
   };
 
   return (
@@ -120,9 +130,10 @@ export function LeadCard({ lead, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule,
               />
             </div>
           </div>
-          <Badge variant={statusInfo.variant} className="font-medium">
-            {t(statusInfo.label.toLowerCase())}
-          </Badge>
+            <StatusSelect
+              value={lead.status}
+              onStatusChange={handleStatusChange}
+            />
         </div>
       </CardHeader>
 
@@ -150,24 +161,12 @@ export function LeadCard({ lead, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule,
           </div>
           
           {/* Tags */}
-          {lead.tags && lead.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-2">
-              {lead.tags.map((tag, index) => (
-                <Badge 
-                  key={index} 
-                  variant="secondary" 
-                  className="text-xs font-medium"
-                  style={{
-                    backgroundColor: getTagBackgroundColor(tag),
-                    color: getTagColor(tag),
-                    border: `1px solid ${getTagColor(tag)}20`,
-                  }}
-                >
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-          )}
+          <div className="mt-2">
+            <TagsSelect
+              value={lead.tags || []}
+              onTagsChange={handleTagsChange}
+            />
+          </div>
         </div>
 
         {/* Último comentario */}

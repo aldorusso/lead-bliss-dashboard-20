@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { InlineEdit } from "@/components/ui/InlineEdit";
+import { StatusSelect } from "@/components/ui/StatusSelect";
+import { TagsSelect } from "@/components/ui/TagsSelect";
 import { MessageCircle, Mail, Calendar, Eye, MessageSquare } from "lucide-react";
 import { Lead } from "@/components/leads/LeadCard";
 import {
@@ -24,7 +26,7 @@ interface LeadListProps {
   onSchedule?: (lead: Lead) => void;
   onViewDetails?: (lead: Lead) => void;
   onStatusClick?: (status: Lead["status"]) => void;
-  onUpdateLead?: (leadId: string, field: string, value: string) => void;
+  onUpdateLead?: (leadId: string, field: string, value: string | string[]) => void;
 }
 
 const statusConfig = {
@@ -43,8 +45,16 @@ export function LeadList({ leads, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
-  const handleFieldUpdate = (leadId: string, field: string, value: string) => {
+  const handleFieldUpdate = (leadId: string, field: string, value: string | string[]) => {
     onUpdateLead?.(leadId, field, value);
+  };
+
+  const handleStatusChange = (leadId: string) => (status: Lead["status"]) => {
+    handleFieldUpdate(leadId, 'status', status);
+  };
+
+  const handleTagsChange = (leadId: string) => (tags: string[]) => {
+    handleFieldUpdate(leadId, 'tags', tags);
   };
 
   return (
@@ -104,32 +114,16 @@ export function LeadList({ leads, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule
                   />
                 </TableCell>
                 <TableCell>
-                  <button 
-                    onClick={() => onStatusClick?.(lead.status)}
-                    className="transition-transform hover:scale-105"
-                  >
-                    <Badge variant={statusInfo.variant} className="font-medium cursor-pointer hover:opacity-80">
-                      {t(statusInfo.label.toLowerCase())}
-                    </Badge>
-                  </button>
+                  <StatusSelect
+                    value={lead.status}
+                    onStatusChange={handleStatusChange(lead.id)}
+                  />
                 </TableCell>
                 <TableCell>
-                  {lead.tags && lead.tags.length > 0 ? (
-                    <div className="flex flex-wrap gap-1">
-                      {lead.tags.slice(0, 2).map((tag, index) => (
-                        <Badge key={index} variant="secondary" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                      {lead.tags.length > 2 && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{lead.tags.length - 2}
-                        </Badge>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="text-muted-foreground text-sm">-</span>
-                  )}
+                  <TagsSelect
+                    value={lead.tags || []}
+                    onTagsChange={handleTagsChange(lead.id)}
+                  />
                 </TableCell>
                 <TableCell className="max-w-[200px]">
                   {lead.comments && lead.comments.length > 0 ? (
