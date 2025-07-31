@@ -7,6 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { 
   BarChart, 
   Bar, 
@@ -29,7 +33,7 @@ import {
   Users, 
   Mail, 
   Phone, 
-  Calendar, 
+  Calendar as CalendarIcon, 
   Download,
   Send,
   BarChart3,
@@ -39,11 +43,14 @@ import {
   Target,
   DollarSign,
   UserCheck,
-  MessageSquare
+  MessageSquare,
+  Filter,
+  X
 } from "lucide-react";
 import { Lead } from "@/components/leads/LeadCard";
 import { useToast } from "@/hooks/use-toast";
 import { ChartContainer } from "@/components/ui/chart";
+import { cn } from "@/lib/utils";
 
 interface StatisticalReportsProps {
   isOpen: boolean;
@@ -57,18 +64,59 @@ export function StatisticalReports({ isOpen, onClose, leads }: StatisticalReport
   const [emailRecipient, setEmailRecipient] = useState("");
   const [emailSubject, setEmailSubject] = useState("Reporte Estadístico de Leads - " + new Date().toLocaleDateString());
   const [emailMessage, setEmailMessage] = useState("Adjunto encontrarás el reporte estadístico completo de leads del CRM.");
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+  const [dateFilterActive, setDateFilterActive] = useState(false);
   const { toast } = useToast();
 
+  // Función para filtrar leads por fecha
+  const getFilteredLeads = () => {
+    if (!dateFilterActive || (!startDate && !endDate)) {
+      return leads;
+    }
+
+    return leads.filter(lead => {
+      // Simulamos una fecha de creación basada en el lastContact
+      // En un sistema real, tendrías una fecha de creación real
+      const leadDate = new Date();
+      
+      if (lead.lastContact === "Ahora") {
+        // Lead de hoy
+      } else if (lead.lastContact.includes("día")) {
+        const days = parseInt(lead.lastContact.match(/\d+/)?.[0] || "0");
+        leadDate.setDate(leadDate.getDate() - days);
+      } else if (lead.lastContact.includes("semana")) {
+        const weeks = parseInt(lead.lastContact.match(/\d+/)?.[0] || "0");
+        leadDate.setDate(leadDate.getDate() - (weeks * 7));
+      } else if (lead.lastContact.includes("mes")) {
+        const months = parseInt(lead.lastContact.match(/\d+/)?.[0] || "0");
+        leadDate.setMonth(leadDate.getMonth() - months);
+      }
+
+      if (startDate && endDate) {
+        return leadDate >= startDate && leadDate <= endDate;
+      } else if (startDate) {
+        return leadDate >= startDate;
+      } else if (endDate) {
+        return leadDate <= endDate;
+      }
+      
+      return true;
+    });
+  };
+
+  const filteredLeads = getFilteredLeads();
+
   // Calcular estadísticas completas
-  const totalLeads = leads.length;
-  const activeLeads = leads.filter(lead => !['cerrado', 'perdido'].includes(lead.status)).length;
-  const newLeads = leads.filter(lead => lead.status === 'nuevo').length;
-  const inConsultation = leads.filter(lead => lead.status === 'consulta-inicial').length;
-  const inEvaluation = leads.filter(lead => lead.status === 'evaluacion').length;
-  const inQuotation = leads.filter(lead => lead.status === 'cotizacion').length;
-  const scheduled = leads.filter(lead => lead.status === 'programado').length;
-  const closed = leads.filter(lead => lead.status === 'cerrado').length;
-  const lost = leads.filter(lead => lead.status === 'perdido').length;
+  const totalLeads = filteredLeads.length;
+  const activeLeads = filteredLeads.filter(lead => !['cerrado', 'perdido'].includes(lead.status)).length;
+  const newLeads = filteredLeads.filter(lead => lead.status === 'nuevo').length;
+  const inConsultation = filteredLeads.filter(lead => lead.status === 'consulta-inicial').length;
+  const inEvaluation = filteredLeads.filter(lead => lead.status === 'evaluacion').length;
+  const inQuotation = filteredLeads.filter(lead => lead.status === 'cotizacion').length;
+  const scheduled = filteredLeads.filter(lead => lead.status === 'programado').length;
+  const closed = filteredLeads.filter(lead => lead.status === 'cerrado').length;
+  const lost = filteredLeads.filter(lead => lead.status === 'perdido').length;
 
   // Datos para gráfica de barras - Estado de leads
   const statusData = [
@@ -87,7 +135,7 @@ export function StatisticalReports({ isOpen, onClose, leads }: StatisticalReport
   // Análisis de tratamientos más solicitados
   const treatmentAnalysis = () => {
     const treatments: { [key: string]: number } = {};
-    leads.forEach(lead => {
+    filteredLeads.forEach(lead => {
       if (lead.interestedTreatments) {
         lead.interestedTreatments.forEach(treatment => {
           treatments[treatment] = (treatments[treatment] || 0) + 1;
@@ -105,7 +153,7 @@ export function StatisticalReports({ isOpen, onClose, leads }: StatisticalReport
   // Análisis de tags más utilizados
   const tagAnalysis = () => {
     const tags: { [key: string]: number } = {};
-    leads.forEach(lead => {
+    filteredLeads.forEach(lead => {
       if (lead.tags) {
         lead.tags.forEach(tag => {
           tags[tag] = (tags[tag] || 0) + 1;
@@ -128,7 +176,7 @@ export function StatisticalReports({ isOpen, onClose, leads }: StatisticalReport
       date.setDate(date.getDate() - i);
       return {
         date: date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' }),
-        leads: leads.filter(lead => {
+        leads: filteredLeads.filter(lead => {
           if (lead.lastContact === "Ahora") return i === 0;
           if (lead.lastContact.includes("día")) {
             const days = parseInt(lead.lastContact.match(/\d+/)?.[0] || "0");
@@ -149,7 +197,7 @@ export function StatisticalReports({ isOpen, onClose, leads }: StatisticalReport
   const lossRate = ((lost / totalLeads) * 100) || 0;
 
   // Leads que requieren seguimiento
-  const needsFollowUp = leads.filter(lead => {
+  const needsFollowUp = filteredLeads.filter(lead => {
     if (lead.status === 'cerrado' || lead.status === 'perdido') return false;
     if (lead.lastContact === "Ahora") return false;
     if (lead.lastContact.includes("semana") || lead.lastContact.includes("mes")) return true;
@@ -161,13 +209,29 @@ export function StatisticalReports({ isOpen, onClose, leads }: StatisticalReport
   }).length;
 
   // Leads con comentarios vs sin comentarios
-  const leadsWithComments = leads.filter(lead => lead.comments && lead.comments.length > 0).length;
+  const leadsWithComments = filteredLeads.filter(lead => lead.comments && lead.comments.length > 0).length;
   const leadsWithoutComments = totalLeads - leadsWithComments;
 
   const commentData = [
     { name: 'Con Comentarios', value: leadsWithComments, color: '#22c55e' },
     { name: 'Sin Comentarios', value: leadsWithoutComments, color: '#ef4444' }
   ];
+
+  const clearDateFilter = () => {
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setDateFilterActive(false);
+  };
+
+  const applyDateFilter = () => {
+    if (startDate || endDate) {
+      setDateFilterActive(true);
+      toast({
+        title: "Filtro aplicado",
+        description: `Mostrando datos ${startDate ? 'desde ' + format(startDate, 'dd/MM/yyyy', { locale: es }) : ''}${startDate && endDate ? ' ' : ''}${endDate ? 'hasta ' + format(endDate, 'dd/MM/yyyy', { locale: es }) : ''}`,
+      });
+    }
+  };
 
   const handleSendEmail = () => {
     if (!emailRecipient.trim()) {
@@ -203,8 +267,104 @@ export function StatisticalReports({ isOpen, onClose, leads }: StatisticalReport
           <DialogTitle className="flex items-center gap-2 text-2xl">
             <BarChart3 className="h-6 w-6 text-primary" />
             Reportes Estadísticos Completos
+            {dateFilterActive && (
+              <Badge variant="secondary" className="ml-2">
+                <Filter className="h-3 w-3 mr-1" />
+                Filtrado
+              </Badge>
+            )}
           </DialogTitle>
         </DialogHeader>
+
+        {/* Filtro de Fechas */}
+        <Card className="mb-4">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <CalendarIcon className="h-5 w-5" />
+              Filtrar por Fechas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap items-end gap-4">
+              <div className="space-y-2">
+                <Label>Fecha de Inicio</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-[240px] justify-start text-left font-normal",
+                        !startDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {startDate ? format(startDate, "dd/MM/yyyy", { locale: es }) : "Seleccionar fecha"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={startDate}
+                      onSelect={setStartDate}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Fecha de Fin</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-[240px] justify-start text-left font-normal",
+                        !endDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {endDate ? format(endDate, "dd/MM/yyyy", { locale: es }) : "Seleccionar fecha"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={endDate}
+                      onSelect={setEndDate}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <Button onClick={applyDateFilter} disabled={!startDate && !endDate}>
+                <Filter className="h-4 w-4 mr-2" />
+                Aplicar Filtro
+              </Button>
+
+              {dateFilterActive && (
+                <Button variant="outline" onClick={clearDateFilter}>
+                  <X className="h-4 w-4 mr-2" />
+                  Limpiar Filtro
+                </Button>
+              )}
+            </div>
+
+            {dateFilterActive && (
+              <div className="mt-4 p-3 bg-muted rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  Mostrando <strong>{totalLeads}</strong> leads 
+                  {startDate && ` desde ${format(startDate, 'dd/MM/yyyy', { locale: es })}`}
+                  {endDate && ` hasta ${format(endDate, 'dd/MM/yyyy', { locale: es })}`}
+                  {totalLeads !== leads.length && ` (de ${leads.length} totales)`}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-5">
