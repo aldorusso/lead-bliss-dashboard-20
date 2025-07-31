@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { InlineEdit } from "@/components/ui/InlineEdit";
 import { MessageCircle, Mail, Calendar, Clock, MessageSquare } from "lucide-react";
 import { useTranslation } from "@/lib/translations";
 import { getLeadAvatar } from "@/lib/avatarUtils";
@@ -43,6 +44,7 @@ interface LeadCardProps {
   onSchedule?: (lead: Lead) => void;
   onViewDetails?: (lead: Lead) => void;
   onStatusClick?: (status: Lead["status"]) => void;
+  onUpdateLead?: (leadId: string, field: string, value: string) => void;
   stages?: Stage[];
 }
 
@@ -56,7 +58,7 @@ const statusConfig = {
   perdido: { color: "bg-red-500", label: "Perdido", variant: "destructive" as const },
 };
 
-export function LeadCard({ lead, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule, onViewDetails, onStatusClick, stages }: LeadCardProps) {
+export function LeadCard({ lead, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule, onViewDetails, onStatusClick, onUpdateLead, stages }: LeadCardProps) {
   const { t } = useTranslation();
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
@@ -76,6 +78,10 @@ export function LeadCard({ lead, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule,
     return false;
   };
 
+  const handleFieldUpdate = (field: string, value: string) => {
+    onUpdateLead?.(lead.id, field, value);
+  };
+
   return (
     <Card className={`group relative overflow-hidden bg-gradient-card border-border/60 shadow-card hover:shadow-hover transition-all duration-300 hover:scale-[1.02] ${needsFollowUp() ? 'ring-2 ring-orange-400/50 border-orange-300/60' : ''}`}>
       <div className={`absolute top-0 left-0 right-0 h-1 ${statusInfo.color}`} />
@@ -91,16 +97,27 @@ export function LeadCard({ lead, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule,
             </Avatar>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                  {lead.name}
-                </h3>
+                <div className="min-w-0 flex-1">
+                  <InlineEdit
+                    value={lead.name}
+                    onSave={(value) => handleFieldUpdate('name', value)}
+                    className="font-semibold text-foreground group-hover:text-primary transition-colors"
+                    placeholder="Nombre del lead"
+                  />
+                </div>
                 {needsFollowUp() && (
                   <div title="Necesita seguimiento">
                     <Clock className="h-4 w-4 text-orange-500" />
                   </div>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground">{lead.email}</p>
+              <InlineEdit
+                value={lead.email}
+                onSave={(value) => handleFieldUpdate('email', value)}
+                className="text-sm text-muted-foreground"
+                placeholder="email@ejemplo.com"
+                type="email"
+              />
             </div>
           </div>
           <Badge variant={statusInfo.variant} className="font-medium">
@@ -112,12 +129,24 @@ export function LeadCard({ lead, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule,
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center text-sm text-muted-foreground">
-            <MessageCircle className="h-4 w-4 mr-2 text-green-600" />
-            <span>{lead.phone}</span>
+            <MessageCircle className="h-4 w-4 mr-2 text-green-600 flex-shrink-0" />
+            <InlineEdit
+              value={lead.phone}
+              onSave={(value) => handleFieldUpdate('phone', value)}
+              className="flex-1"
+              placeholder="+34 600 000 000"
+              type="tel"
+            />
           </div>
           <div className="flex items-center text-sm text-muted-foreground">
-            <Mail className="h-4 w-4 mr-2 text-primary/60" />
-            <span>{lead.email}</span>
+            <Mail className="h-4 w-4 mr-2 text-primary/60 flex-shrink-0" />
+            <InlineEdit
+              value={lead.email}
+              onSave={(value) => handleFieldUpdate('email', value)}
+              className="flex-1"
+              placeholder="email@ejemplo.com"
+              type="email"
+            />
           </div>
           
           {/* Tags */}

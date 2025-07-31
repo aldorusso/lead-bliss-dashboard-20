@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { InlineEdit } from "@/components/ui/InlineEdit";
 import { MessageCircle, Mail, Calendar, Eye, MessageSquare } from "lucide-react";
 import { Lead } from "@/components/leads/LeadCard";
 import {
@@ -23,6 +24,7 @@ interface LeadListProps {
   onSchedule?: (lead: Lead) => void;
   onViewDetails?: (lead: Lead) => void;
   onStatusClick?: (status: Lead["status"]) => void;
+  onUpdateLead?: (leadId: string, field: string, value: string) => void;
 }
 
 const statusConfig = {
@@ -35,10 +37,14 @@ const statusConfig = {
   perdido: { color: "bg-red-500", label: "Perdido", variant: "destructive" as const },
 };
 
-export function LeadList({ leads, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule, onViewDetails, onStatusClick }: LeadListProps) {
+export function LeadList({ leads, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule, onViewDetails, onStatusClick, onUpdateLead }: LeadListProps) {
   const { t } = useTranslation();
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
+
+  const handleFieldUpdate = (leadId: string, field: string, value: string) => {
+    onUpdateLead?.(leadId, field, value);
   };
 
   return (
@@ -70,12 +76,33 @@ export function LeadList({ leads, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="font-semibold text-foreground">{lead.name}</div>
+                      <InlineEdit
+                        value={lead.name}
+                        onSave={(value) => handleFieldUpdate(lead.id, 'name', value)}
+                        className="font-semibold text-foreground"
+                        placeholder="Nombre del lead"
+                      />
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="text-muted-foreground">{lead.email}</TableCell>
-                <TableCell className="text-muted-foreground">{lead.phone}</TableCell>
+                <TableCell>
+                  <InlineEdit
+                    value={lead.email}
+                    onSave={(value) => handleFieldUpdate(lead.id, 'email', value)}
+                    className="text-muted-foreground"
+                    placeholder="email@ejemplo.com"
+                    type="email"
+                  />
+                </TableCell>
+                <TableCell>
+                  <InlineEdit
+                    value={lead.phone}
+                    onSave={(value) => handleFieldUpdate(lead.id, 'phone', value)}
+                    className="text-muted-foreground"
+                    placeholder="+34 600 000 000"
+                    type="tel"
+                  />
+                </TableCell>
                 <TableCell>
                   <button 
                     onClick={() => onStatusClick?.(lead.status)}
