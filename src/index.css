@@ -62,6 +62,22 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 5% 26%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 210 100% 56%;
+
+    /* Status colors */
+    --status-nuevo: 217 91% 60%;
+    --status-nuevo-foreground: 0 0% 98%;
+    --status-consulta: 45 93% 47%;
+    --status-consulta-foreground: 0 0% 98%;
+    --status-evaluacion: 262 83% 58%;
+    --status-evaluacion-foreground: 0 0% 98%;
+    --status-cotizacion: 25 95% 53%;
+    --status-cotizacion-foreground: 0 0% 98%;
+    --status-programado: 237 80% 65%;
+    --status-programado-foreground: 0 0% 98%;
+    --status-cerrado: 142 76% 36%;
+    --status-cerrado-foreground: 0 0% 98%;
+    --status-perdido: 0 84% 60%;
+    --status-perdido-foreground: 0 0% 98%;
   }
 
   .dark {
@@ -117,6 +133,22 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 240 6% 10%;
     --sidebar-ring: 210 100% 56%;
+
+    /* Status colors - same for dark mode */
+    --status-nuevo: 217 91% 60%;
+    --status-nuevo-foreground: 0 0% 98%;
+    --status-consulta: 45 93% 47%;
+    --status-consulta-foreground: 0 0% 98%;
+    --status-evaluacion: 262 83% 58%;
+    --status-evaluacion-foreground: 0 0% 98%;
+    --status-cotizacion: 25 95% 53%;
+    --status-cotizacion-foreground: 0 0% 98%;
+    --status-programado: 237 80% 65%;
+    --status-programado-foreground: 0 0% 98%;
+    --status-cerrado: 142 76% 36%;
+    --status-cerrado-foreground: 0 0% 98%;
+    --status-perdido: 0 84% 60%;
+    --status-perdido-foreground: 0 0% 98%;
   }
 }
 

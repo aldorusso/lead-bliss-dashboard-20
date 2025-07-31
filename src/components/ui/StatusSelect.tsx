@@ -19,13 +19,55 @@ interface StatusSelectProps {
 }
 
 const statusConfig = {
-  nuevo: { color: "bg-blue-500", label: "Nuevo", variant: "default" as const },
-  "consulta-inicial": { color: "bg-yellow-500", label: "Consulta Inicial", variant: "secondary" as const },
-  evaluacion: { color: "bg-purple-500", label: "Evaluación", variant: "outline" as const },
-  cotizacion: { color: "bg-orange-500", label: "Cotización", variant: "default" as const },
-  programado: { color: "bg-indigo-500", label: "Programado", variant: "default" as const },
-  cerrado: { color: "bg-green-500", label: "Cerrado", variant: "default" as const },
-  perdido: { color: "bg-red-500", label: "Perdido", variant: "destructive" as const },
+  nuevo: { 
+    color: "bg-status-nuevo", 
+    textColor: "text-status-nuevo-foreground",
+    label: "Nuevo", 
+    variant: "default" as const,
+    borderColor: "border-status-nuevo"
+  },
+  "consulta-inicial": { 
+    color: "bg-status-consulta", 
+    textColor: "text-status-consulta-foreground",
+    label: "Consulta Inicial", 
+    variant: "secondary" as const,
+    borderColor: "border-status-consulta"
+  },
+  evaluacion: { 
+    color: "bg-status-evaluacion", 
+    textColor: "text-status-evaluacion-foreground",
+    label: "Evaluación", 
+    variant: "outline" as const,
+    borderColor: "border-status-evaluacion"
+  },
+  cotizacion: { 
+    color: "bg-status-cotizacion", 
+    textColor: "text-status-cotizacion-foreground",
+    label: "Cotización", 
+    variant: "default" as const,
+    borderColor: "border-status-cotizacion"
+  },
+  programado: { 
+    color: "bg-status-programado", 
+    textColor: "text-status-programado-foreground",
+    label: "Programado", 
+    variant: "default" as const,
+    borderColor: "border-status-programado"
+  },
+  cerrado: { 
+    color: "bg-status-cerrado", 
+    textColor: "text-status-cerrado-foreground",
+    label: "Cerrado", 
+    variant: "default" as const,
+    borderColor: "border-status-cerrado"
+  },
+  perdido: { 
+    color: "bg-status-perdido", 
+    textColor: "text-status-perdido-foreground",
+    label: "Perdido", 
+    variant: "destructive" as const,
+    borderColor: "border-status-perdido"
+  },
 };
 
 export function StatusSelect({ value, onStatusChange, disabled = false }: StatusSelectProps) {
@@ -45,7 +87,10 @@ export function StatusSelect({ value, onStatusChange, disabled = false }: Status
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
           <div className="flex items-center space-x-1">
-            <Badge variant={currentStatus.variant} className="font-medium cursor-pointer hover:opacity-80">
+            <Badge 
+              variant={currentStatus.variant} 
+              className={`font-medium cursor-pointer hover:opacity-80 ${currentStatus.color} ${currentStatus.textColor} border-0`}
+            >
               {t(currentStatus.label.toLowerCase())}
             </Badge>
             <ChevronDown className="h-3 w-3 text-muted-foreground" />
@@ -59,7 +104,10 @@ export function StatusSelect({ value, onStatusChange, disabled = false }: Status
             onClick={() => onStatusChange(key as LeadStatus)}
             className="cursor-pointer"
           >
-            <Badge variant={config.variant} className="font-medium">
+            <Badge 
+              variant={config.variant} 
+              className={`font-medium ${config.color} ${config.textColor} border-0`}
+            >
               {t(config.label.toLowerCase())}
             </Badge>
           </DropdownMenuItem>

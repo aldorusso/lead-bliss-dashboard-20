@@ -38,13 +38,13 @@ interface BulkActionsMenuProps {
 }
 
 const statusOptions = [
-  { key: "nuevo", label: "Nuevo", variant: "default" as const },
-  { key: "consulta-inicial", label: "Consulta Inicial", variant: "secondary" as const },
-  { key: "evaluacion", label: "Evaluación", variant: "outline" as const },
-  { key: "cotizacion", label: "Cotización", variant: "default" as const },
-  { key: "programado", label: "Programado", variant: "default" as const },
-  { key: "cerrado", label: "Cerrado", variant: "default" as const },
-  { key: "perdido", label: "Perdido", variant: "destructive" as const },
+  { key: "nuevo", label: "Nuevo", variant: "default" as const, color: "bg-status-nuevo" },
+  { key: "consulta-inicial", label: "Consulta Inicial", variant: "secondary" as const, color: "bg-status-consulta" },
+  { key: "evaluacion", label: "Evaluación", variant: "outline" as const, color: "bg-status-evaluacion" },
+  { key: "cotizacion", label: "Cotización", variant: "default" as const, color: "bg-status-cotizacion" },
+  { key: "programado", label: "Programado", variant: "default" as const, color: "bg-status-programado" },
+  { key: "cerrado", label: "Cerrado", variant: "default" as const, color: "bg-status-cerrado" },
+  { key: "perdido", label: "Perdido", variant: "destructive" as const, color: "bg-status-perdido" },
 ];
 
 export function BulkActionsMenu({
@@ -100,7 +100,10 @@ export function BulkActionsMenu({
                   onClick={() => onChangeStatus(selectedIds, status.key as Lead["status"])}
                   className="cursor-pointer"
                 >
-                  <Badge variant={status.variant} className="mr-2 text-xs">
+                  <Badge 
+                    variant={status.variant} 
+                    className={`mr-2 text-xs ${status.color} text-white border-0`}
+                  >
                     {status.label}
                   </Badge>
                   Mover a {status.label}

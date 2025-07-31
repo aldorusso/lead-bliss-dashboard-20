@@ -69,6 +69,34 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				'status-nuevo': {
+					DEFAULT: 'hsl(var(--status-nuevo))',
+					foreground: 'hsl(var(--status-nuevo-foreground))'
+				},
+				'status-consulta': {
+					DEFAULT: 'hsl(var(--status-consulta))',
+					foreground: 'hsl(var(--status-consulta-foreground))'
+				},
+				'status-evaluacion': {
+					DEFAULT: 'hsl(var(--status-evaluacion))',
+					foreground: 'hsl(var(--status-evaluacion-foreground))'
+				},
+				'status-cotizacion': {
+					DEFAULT: 'hsl(var(--status-cotizacion))',
+					foreground: 'hsl(var(--status-cotizacion-foreground))'
+				},
+				'status-programado': {
+					DEFAULT: 'hsl(var(--status-programado))',
+					foreground: 'hsl(var(--status-programado-foreground))'
+				},
+				'status-cerrado': {
+					DEFAULT: 'hsl(var(--status-cerrado))',
+					foreground: 'hsl(var(--status-cerrado-foreground))'
+				},
+				'status-perdido': {
+					DEFAULT: 'hsl(var(--status-perdido))',
+					foreground: 'hsl(var(--status-perdido-foreground))'
 				}
 			},
 			backgroundImage: {

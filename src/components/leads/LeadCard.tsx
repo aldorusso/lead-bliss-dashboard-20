@@ -51,13 +51,13 @@ interface LeadCardProps {
 }
 
 const statusConfig = {
-  nuevo: { color: "bg-blue-500", label: "Nuevo", variant: "default" as const },
-  "consulta-inicial": { color: "bg-yellow-500", label: "Consulta Inicial", variant: "secondary" as const },
-  evaluacion: { color: "bg-purple-500", label: "Evaluación", variant: "outline" as const },
-  cotizacion: { color: "bg-orange-500", label: "Cotización", variant: "default" as const },
-  programado: { color: "bg-indigo-500", label: "Programado", variant: "default" as const },
-  cerrado: { color: "bg-green-500", label: "Cerrado", variant: "default" as const },
-  perdido: { color: "bg-red-500", label: "Perdido", variant: "destructive" as const },
+  nuevo: { color: "bg-status-nuevo", label: "Nuevo", variant: "default" as const },
+  "consulta-inicial": { color: "bg-status-consulta", label: "Consulta Inicial", variant: "secondary" as const },
+  evaluacion: { color: "bg-status-evaluacion", label: "Evaluación", variant: "outline" as const },
+  cotizacion: { color: "bg-status-cotizacion", label: "Cotización", variant: "default" as const },
+  programado: { color: "bg-status-programado", label: "Programado", variant: "default" as const },
+  cerrado: { color: "bg-status-cerrado", label: "Cerrado", variant: "default" as const },
+  perdido: { color: "bg-status-perdido", label: "Perdido", variant: "destructive" as const },
 };
 
 export function LeadCard({ lead, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule, onViewDetails, onStatusClick, onUpdateLead, stages }: LeadCardProps) {
