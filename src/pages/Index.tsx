@@ -346,6 +346,79 @@ const Index = () => {
     });
   };
 
+  const handleDuplicateLeads = (leads: Lead[]) => {
+    const duplicatedLeads = leads.map(lead => ({
+      ...lead,
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      name: `${lead.name} (Copia)`,
+      lastContact: "Ahora",
+      status: "nuevo" as Lead["status"]
+    }));
+    
+    setLeads(prev => [...duplicatedLeads, ...prev]);
+    setSelectedLeads([]);
+    toast({
+      title: "Leads duplicados",
+      description: `${leads.length} leads han sido duplicados exitosamente`,
+    });
+  };
+
+  const handleExportLeads = (leads: Lead[]) => {
+    try {
+      // Preparar datos para CSV
+      const csvHeaders = ['Nombre', 'Email', 'Teléfono', 'Estado', 'Último Contacto', 'Etiquetas', 'Comentarios'];
+      const csvData = leads.map(lead => [
+        lead.name,
+        lead.email,
+        lead.phone,
+        lead.status,
+        lead.lastContact,
+        (lead.tags || []).join('; '),
+        (lead.comments || []).map(c => c.text).join(' | ')
+      ]);
+      
+      const csvContent = [csvHeaders, ...csvData]
+        .map(row => row.map(field => `"${field}"`).join(','))
+        .join('\n');
+      
+      // Crear y descargar archivo
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `leads_export_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      setSelectedLeads([]);
+      toast({
+        title: "Exportación exitosa",
+        description: `${leads.length} leads exportados a CSV`,
+      });
+    } catch (error) {
+      toast({
+        title: "Error en exportación",
+        description: "No se pudo exportar el archivo",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleArchiveLeads = (leadIds: string[]) => {
+    setLeads(prev => prev.map(lead => 
+      leadIds.includes(lead.id) 
+        ? { ...lead, tags: [...(lead.tags || []), 'archivado'].filter((tag, index, arr) => arr.indexOf(tag) === index) }
+        : lead
+    ));
+    setSelectedLeads([]);
+    toast({
+      title: "Leads archivados",
+      description: `${leadIds.length} leads han sido archivados`,
+    });
+  };
+
   const handleUpdateLead = (leadId: string, field: string, value: string | string[]) => {
     setLeads(prev => prev.map(lead => 
       lead.id === leadId 
@@ -580,6 +653,9 @@ const Index = () => {
           onBulkEmail={handleBulkEmail}
           onBulkWhatsApp={handleBulkWhatsApp}
           onAddTags={handleBulkAddTags}
+          onDuplicateLeads={handleDuplicateLeads}
+          onExportLeads={handleExportLeads}
+          onArchiveLeads={handleArchiveLeads}
         />
 
         {/* Lead Form */}

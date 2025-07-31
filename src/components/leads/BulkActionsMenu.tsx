@@ -15,7 +15,11 @@ import {
   Phone, 
   Tag, 
   X,
-  MoreHorizontal
+  MoreHorizontal,
+  Copy,
+  Download,
+  Archive,
+  FileText
 } from "lucide-react";
 import { Lead } from "@/components/leads/LeadCard";
 import { useTranslation } from "@/lib/translations";
@@ -28,6 +32,9 @@ interface BulkActionsMenuProps {
   onBulkEmail: (leads: Lead[]) => void;
   onBulkWhatsApp: (leads: Lead[]) => void;
   onAddTags: (leadIds: string[], tags: string[]) => void;
+  onDuplicateLeads: (leads: Lead[]) => void;
+  onExportLeads: (leads: Lead[]) => void;
+  onArchiveLeads: (leadIds: string[]) => void;
 }
 
 const statusOptions = [
@@ -47,7 +54,10 @@ export function BulkActionsMenu({
   onChangeStatus,
   onBulkEmail,
   onBulkWhatsApp,
-  onAddTags
+  onAddTags,
+  onDuplicateLeads,
+  onExportLeads,
+  onArchiveLeads
 }: BulkActionsMenuProps) {
   const { t } = useTranslation();
   
@@ -75,12 +85,12 @@ export function BulkActionsMenu({
         <div className="h-4 w-px bg-border" />
 
         <div className="flex items-center space-x-2">
-          {/* Cambiar Estado */}
+          {/* Mover a etapa */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8">
                 <ArrowRight className="h-3 w-3 mr-2" />
-                Cambiar estado
+                Mover a etapa
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="center" className="w-48">
@@ -107,18 +117,29 @@ export function BulkActionsMenu({
             className="h-8"
           >
             <Mail className="h-3 w-3 mr-2" />
-            Email
+            Email masivo
           </Button>
 
-          {/* WhatsApp masivo */}
+          {/* Duplicar */}
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onBulkWhatsApp(selectedLeads)}
+            onClick={() => onDuplicateLeads(selectedLeads)}
             className="h-8"
           >
-            <Phone className="h-3 w-3 mr-2" />
-            WhatsApp
+            <Copy className="h-3 w-3 mr-2" />
+            Duplicar
+          </Button>
+
+          {/* Exportar */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onExportLeads(selectedLeads)}
+            className="h-8"
+          >
+            <Download className="h-3 w-3 mr-2" />
+            Exportar
           </Button>
 
           {/* Más acciones */}
@@ -128,13 +149,20 @@ export function BulkActionsMenu({
                 <MoreHorizontal className="h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="w-48">
               <DropdownMenuItem
                 onClick={() => onAddTags(selectedIds, ["seguimiento"])}
                 className="cursor-pointer"
               >
                 <Tag className="h-3 w-3 mr-2" />
                 Agregar etiqueta
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => onArchiveLeads(selectedIds)}
+                className="cursor-pointer"
+              >
+                <Archive className="h-3 w-3 mr-2" />
+                Archivar leads
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
