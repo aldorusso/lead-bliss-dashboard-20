@@ -44,6 +44,7 @@ const Index = () => {
     tags: "all",
     dateRange: "all",
   });
+  const [activeStatFilter, setActiveStatFilter] = useState<'active' | 'new' | 'conversion' | 'needsFollowUp' | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isAutomationsOpen, setIsAutomationsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -69,6 +70,33 @@ const Index = () => {
   const { toast } = useToast();
 
   const filteredLeads = leads.filter(lead => {
+    // Aplicar filtro estadístico si está activo
+    if (activeStatFilter) {
+      switch (activeStatFilter) {
+        case 'active':
+          if (['cerrado', 'perdido'].includes(lead.status)) return false;
+          break;
+        case 'new':
+          if (lead.status !== 'nuevo') return false;
+          break;
+        case 'conversion':
+          if (!['cerrado', 'perdido'].includes(lead.status)) return false;
+          break;
+        case 'needsFollowUp':
+          if (lead.status === 'cerrado' || lead.status === 'perdido') return false;
+          if (lead.lastContact === "Ahora") return false;
+          if (!lead.lastContact.includes("semana") && !lead.lastContact.includes("mes")) {
+            if (lead.lastContact.includes("día")) {
+              const days = parseInt(lead.lastContact.match(/\d+/)?.[0] || "0");
+              if (days <= 7) return false;
+            } else {
+              return false;
+            }
+          }
+          break;
+      }
+    }
+
     if (filters.search && !lead.name.toLowerCase().includes(filters.search.toLowerCase()) && 
         !lead.email.toLowerCase().includes(filters.search.toLowerCase())) {
       return false;
@@ -93,6 +121,27 @@ const Index = () => {
   // Reset to first page when filters change
   const handleFiltersChange = (newFilters: typeof filters) => {
     setFilters(newFilters);
+    setCurrentPage(1);
+    // Clear stat filter when normal filters are used
+    if (activeStatFilter) {
+      setActiveStatFilter(null);
+    }
+  };
+
+  const handleStatClick = (filterType: 'active' | 'new' | 'conversion' | 'needsFollowUp') => {
+    if (activeStatFilter === filterType) {
+      // Si ya está activo, desactivar
+      setActiveStatFilter(null);
+    } else {
+      // Activar nuevo filtro y limpiar filtros normales
+      setActiveStatFilter(filterType);
+      setFilters({
+        search: "",
+        status: "all",
+        tags: "all",
+        dateRange: "all",
+      });
+    }
     setCurrentPage(1);
   };
 
@@ -241,12 +290,19 @@ const Index = () => {
         </div>
 
         {/* Stats */}
-        <LeadStats leads={leads} />
+        <LeadStats 
+          leads={leads} 
+          onStatClick={handleStatClick}
+          activeFilter={activeStatFilter}
+        />
 
         {/* Tags Overview */}
         <TagsOverview 
           leads={leads} 
-          onTagClick={(tag) => handleFiltersChange({ ...filters, tags: filters.tags === tag ? "all" : tag })}
+          onTagClick={(tag) => {
+            handleFiltersChange({ ...filters, tags: filters.tags === tag ? "all" : tag });
+            setActiveStatFilter(null); // Clear stat filter when using tag filter
+          }}
           selectedTag={filters.tags !== "all" ? filters.tags : undefined}
         />
 
@@ -266,12 +322,24 @@ const Index = () => {
 
         {/* View Controls */}
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {t('showing')} {paginatedLeads.length} {t('of')} {filteredLeads.length} {t('leadsText')} 
-            {totalPages > 1 && (
-              <span> ({t('page')} {currentPage} {t('of')} {totalPages})</span>
+          <div className="space-y-1">
+            <p className="text-sm text-muted-foreground">
+              {t('showing')} {paginatedLeads.length} {t('of')} {filteredLeads.length} {t('leadsText')} 
+              {totalPages > 1 && (
+                <span> ({t('page')} {currentPage} {t('of')} {totalPages})</span>
+              )}
+            </p>
+            {activeStatFilter && (
+              <p className="text-xs text-primary font-medium">
+                Filtro activo: {
+                  activeStatFilter === 'active' ? 'Leads Activos' :
+                  activeStatFilter === 'new' ? 'Nuevos Leads' :
+                  activeStatFilter === 'conversion' ? 'Leads Finalizados' :
+                  'Requieren Seguimiento'
+                }
+              </p>
             )}
-          </p>
+          </div>
           <ViewToggle view={view} onViewChange={setView} />
         </div>
 
@@ -287,7 +355,10 @@ const Index = () => {
                 onEmail={handleEmail}
                 onSchedule={handleSchedule}
                 onViewDetails={handleViewDetails}
-                onStatusClick={(status) => handleFiltersChange({ ...filters, status: filters.status === status ? "all" : status })}
+            onStatusClick={(status) => {
+              handleFiltersChange({ ...filters, status: filters.status === status ? "all" : status });
+              setActiveStatFilter(null); // Clear stat filter when using status filter
+            }}
                 stages={stages}
               />
             ))}
@@ -300,7 +371,10 @@ const Index = () => {
             onEmail={handleEmail}
             onSchedule={handleSchedule}
             onViewDetails={handleViewDetails}
-            onStatusClick={(status) => handleFiltersChange({ ...filters, status: filters.status === status ? "all" : status })}
+                onStatusClick={(status) => {
+                  handleFiltersChange({ ...filters, status: filters.status === status ? "all" : status });
+                  setActiveStatFilter(null); // Clear stat filter when using status filter
+                }}
           />
         )}
 

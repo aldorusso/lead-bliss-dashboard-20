@@ -14,11 +14,18 @@ interface StatCardProps {
   };
   icon: React.ElementType;
   className?: string;
+  onClick?: () => void;
+  isActive?: boolean;
 }
 
-function StatCard({ title, value, description, trend, icon: Icon, className = "" }: StatCardProps) {
+function StatCard({ title, value, description, trend, icon: Icon, className = "", onClick, isActive = false }: StatCardProps) {
   return (
-    <Card className={`bg-gradient-card border-border/60 shadow-card hover:shadow-hover transition-all duration-300 ${className}`}>
+    <Card 
+      className={`bg-gradient-card border-border/60 shadow-card hover:shadow-hover transition-all duration-300 ${
+        onClick ? 'cursor-pointer hover:scale-[1.02]' : ''
+      } ${isActive ? 'ring-2 ring-primary/50 border-primary/60' : ''} ${className}`}
+      onClick={onClick}
+    >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
@@ -54,9 +61,11 @@ function StatCard({ title, value, description, trend, icon: Icon, className = ""
 
 interface LeadStatsProps {
   leads: Lead[];
+  onStatClick?: (filterType: 'active' | 'new' | 'conversion' | 'needsFollowUp') => void;
+  activeFilter?: 'active' | 'new' | 'conversion' | 'needsFollowUp' | null;
 }
 
-export function LeadStats({ leads = [] }: LeadStatsProps) {
+export function LeadStats({ leads = [], onStatClick, activeFilter }: LeadStatsProps) {
   const { t } = useTranslation();
   
   // Calculate real stats from leads data
@@ -104,6 +113,8 @@ export function LeadStats({ leads = [] }: LeadStatsProps) {
           isPositive: activeLeads > lostLeads 
         }}
         icon={Users}
+        onClick={() => onStatClick?.('active')}
+        isActive={activeFilter === 'active'}
       />
       
       <StatCard
@@ -115,6 +126,8 @@ export function LeadStats({ leads = [] }: LeadStatsProps) {
           isPositive: newLeads > 0 
         }}
         icon={Mail}
+        onClick={() => onStatClick?.('new')}
+        isActive={activeFilter === 'new'}
       />
       
       <StatCard
@@ -126,6 +139,8 @@ export function LeadStats({ leads = [] }: LeadStatsProps) {
           isPositive: parseFloat(conversionRate) > 50 
         }}
         icon={CheckCircle}
+        onClick={() => onStatClick?.('conversion')}
+        isActive={activeFilter === 'conversion'}
       />
       
       <StatCard
@@ -137,6 +152,8 @@ export function LeadStats({ leads = [] }: LeadStatsProps) {
           isPositive: needsFollowUp === 0 
         }}
         icon={Clock}
+        onClick={() => onStatClick?.('needsFollowUp')}
+        isActive={activeFilter === 'needsFollowUp'}
       />
     </div>
   );
