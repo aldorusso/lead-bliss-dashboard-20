@@ -2,7 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageCircle, Mail, Calendar, Clock } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { MessageCircle, Mail, Calendar, Clock, MessageSquare } from "lucide-react";
 import { useTranslation } from "@/lib/translations";
 import { getLeadAvatar } from "@/lib/avatarUtils";
 import { getTagColor, getTagBackgroundColor } from "@/lib/tagColors";
@@ -139,6 +140,37 @@ export function LeadCard({ lead, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule,
             </div>
           )}
         </div>
+
+        {/* Último comentario */}
+        {lead.comments && lead.comments.length > 0 && (
+          <div className="mt-3 pt-2 border-t border-border/40">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-start space-x-2 p-2 rounded-md bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
+                    <MessageSquare className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-xs text-muted-foreground truncate">
+                        {lead.comments[lead.comments.length - 1].text}
+                      </div>
+                      <div className="text-xs text-muted-foreground/70 mt-1">
+                        Por {lead.comments[lead.comments.length - 1].author}
+                      </div>
+                    </div>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <div className="space-y-1">
+                    <p className="text-sm">{lead.comments[lead.comments.length - 1].text}</p>
+                    <div className="text-xs text-muted-foreground">
+                      Por {lead.comments[lead.comments.length - 1].author} - {lead.comments[lead.comments.length - 1].timestamp}
+                    </div>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        )}
 
         {/* Pipeline Visual */}
         <div className="mt-3 pt-2 border-t border-border/40">

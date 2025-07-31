@@ -1,7 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageCircle, Mail, Calendar, Eye } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { MessageCircle, Mail, Calendar, Eye, MessageSquare } from "lucide-react";
 import { Lead } from "@/components/leads/LeadCard";
 import {
   Table,
@@ -50,6 +51,7 @@ export function LeadList({ leads, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule
             <TableHead>WhatsApp</TableHead>
             <TableHead>{t('status')}</TableHead>
             <TableHead>{t('tags')}</TableHead>
+            <TableHead>Último comentario</TableHead>
             <TableHead>{t('lastContact')}</TableHead>
             <TableHead className="text-right">{t('actions')}</TableHead>
           </TableRow>
@@ -98,6 +100,32 @@ export function LeadList({ leads, onWhatsApp, onWhatsAppAPI, onEmail, onSchedule
                         </Badge>
                       )}
                     </div>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">-</span>
+                  )}
+                </TableCell>
+                <TableCell className="max-w-[200px]">
+                  {lead.comments && lead.comments.length > 0 ? (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center space-x-2 cursor-pointer">
+                            <MessageSquare className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            <span className="text-sm text-muted-foreground truncate">
+                              {lead.comments[lead.comments.length - 1].text}
+                            </span>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <div className="space-y-1">
+                            <p className="text-sm">{lead.comments[lead.comments.length - 1].text}</p>
+                            <div className="text-xs text-muted-foreground">
+                              Por {lead.comments[lead.comments.length - 1].author} - {lead.comments[lead.comments.length - 1].timestamp}
+                            </div>
+                          </div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   ) : (
                     <span className="text-muted-foreground text-sm">-</span>
                   )}
