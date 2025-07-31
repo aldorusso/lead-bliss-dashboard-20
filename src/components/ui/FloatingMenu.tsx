@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Settings, User, LogOut, Zap, X, Moon, Sun, MessageCircle } from "lucide-react";
+import { Settings, User, LogOut, Zap, X, Moon, Sun, MessageCircle, BarChart3 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/translations";
@@ -13,9 +13,10 @@ interface FloatingMenuProps {
   onAutomationsClick?: () => void;
   onSettingsClick?: () => void;
   onWhatsAppClick?: () => void;
+  onReportsClick?: () => void;
 }
 
-export function FloatingMenu({ userName = "Usuario", userAvatar, onAutomationsClick, onSettingsClick, onWhatsAppClick }: FloatingMenuProps) {
+export function FloatingMenu({ userName = "Usuario", userAvatar, onAutomationsClick, onSettingsClick, onWhatsAppClick, onReportsClick }: FloatingMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
@@ -54,6 +55,9 @@ export function FloatingMenu({ userName = "Usuario", userAvatar, onAutomationsCl
       case "whatsapp":
         onWhatsAppClick?.();
         break;
+      case "reports":
+        onReportsClick?.();
+        break;
       case "settings":
         onSettingsClick?.();
         break;
@@ -84,6 +88,12 @@ export function FloatingMenu({ userName = "Usuario", userAvatar, onAutomationsCl
       label: "WhatsApp Automático",
       icon: MessageCircle,
       onClick: () => handleAction("whatsapp"),
+    },
+    {
+      id: "reports",
+      label: "Reportes Estadísticos",
+      icon: BarChart3,
+      onClick: () => handleAction("reports"),
     },
     {
       id: "automations",

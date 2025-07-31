@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { LeadCard, Lead } from "@/components/leads/LeadCard";
 import { LeadList } from "@/components/leads/LeadList";
 import { LeadStats } from "@/components/leads/LeadStats";
+import { StatisticalReports } from "@/components/leads/StatisticalReports";
 import { LeadFilters } from "@/components/leads/LeadFilters";
 import { GameificationBadges } from "@/components/leads/GameificationBadges";
 import { LeadForm } from "@/components/leads/LeadForm";
@@ -47,6 +48,7 @@ const Index = () => {
   const [isAutomationsOpen, setIsAutomationsOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isWhatsAppOpen, setIsWhatsAppOpen] = useState(false);
+  const [isReportsOpen, setIsReportsOpen] = useState(false);
   const [isSetupWizardOpen, setIsSetupWizardOpen] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | undefined>(undefined);
   const [view, setView] = useState<"grid" | "list">("grid");
@@ -60,8 +62,8 @@ const Index = () => {
   
   // Check if this is the first time using the app
   useEffect(() => {
-    // Always show tour for now
-    setIsSetupWizardOpen(true);
+    // Tour disabled - no longer showing by default
+    // setIsSetupWizardOpen(true);
   }, []);
 
   const { toast } = useToast();
@@ -185,6 +187,10 @@ const Index = () => {
 
   const handleOpenWhatsApp = () => {
     setIsWhatsAppOpen(true);
+  };
+
+  const handleOpenReports = () => {
+    setIsReportsOpen(true);
   };
 
   const handleCompleteSetup = () => {
@@ -448,6 +454,7 @@ const Index = () => {
           onAutomationsClick={handleOpenAutomations}
           onSettingsClick={handleOpenSettings}
           onWhatsAppClick={handleOpenWhatsApp}
+          onReportsClick={handleOpenReports}
         />
 
         {/* WhatsApp Widget */}
@@ -455,6 +462,13 @@ const Index = () => {
           isOpen={isWhatsAppOpen}
           onClose={() => setIsWhatsAppOpen(false)}
           stages={stages}
+        />
+
+        {/* Statistical Reports */}
+        <StatisticalReports 
+          isOpen={isReportsOpen}
+          onClose={() => setIsReportsOpen(false)}
+          leads={leads}
         />
 
         {/* Guided Tour */}
