@@ -15,6 +15,12 @@ import { CallModal, EmailModal } from "@/components/leads/ActionModals";
 import { WhatsAppWidget } from "@/components/leads/WhatsAppWidget";
 import { ViewToggle } from "@/components/leads/ViewToggle";
 import { TagsOverview } from "@/components/leads/TagsOverview";
+import { MobileLeadCard } from "@/components/mobile/MobileLeadCard";
+import { MobileFilters } from "@/components/mobile/MobileFilters";
+import { MobileStats } from "@/components/mobile/MobileStats";
+import { MobileHeader } from "@/components/mobile/MobileHeader";
+import { MobileActions } from "@/components/mobile/MobileActions";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Pagination, 
   PaginationContent, 
@@ -30,6 +36,7 @@ import { useTranslation } from "@/lib/translations";
 
 const Index = () => {
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
   const [stages, setStages] = useState([
     { key: "nuevo", label: "Nuevo", color: "bg-blue-400" },
@@ -431,6 +438,81 @@ const Index = () => {
     });
   };
 
+  const handleCall = (lead: Lead) => {
+    setSelectedLead(lead);
+    setCallModalOpen(true);
+  };
+
+  const handleStatusChange = (lead: Lead, status: Lead["status"]) => {
+    handleUpdateLead(lead.id, 'status', status);
+  };
+
+  // Mobile Layout
+  if (isMobile) {
+    return (
+      <div className="min-h-screen bg-background mobile-scroll">
+        <MobileHeader 
+          title="Leads Dashboard"
+          onAddLead={handleAddLead}
+          leadsCount={leads.filter(l => !['cerrado', 'perdido'].includes(l.status)).length}
+        />
+        
+        <MobileStats 
+          leads={leads}
+          onStatClick={handleStatClick}
+          activeFilter={activeStatFilter}
+        />
+        
+        <MobileFilters 
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          leads={leads}
+        />
+        
+        <div className="p-4 space-y-4 pb-20">
+          {paginatedLeads.map((lead, index) => (
+            <MobileLeadCard
+              key={lead.id}
+              lead={lead}
+              onWhatsApp={handleWhatsApp}
+              onEmail={handleEmail}
+              onSchedule={handleSchedule}
+              onViewDetails={handleViewDetails}
+              onCall={handleCall}
+              onStatusChange={handleStatusChange}
+            />
+          ))}
+          
+          {paginatedLeads.length === 0 && (
+            <div className="text-center py-12 animate-fade-in">
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-lg font-semibold mb-2">No se encontraron leads</h3>
+              <p className="text-sm text-muted-foreground">Intenta ajustar los filtros</p>
+            </div>
+          )}
+        </div>
+        
+        <MobileActions
+          selectedLeads={selectedLeads}
+          leads={leads}
+          onBulkDelete={handleBulkDelete}
+          onBulkEmail={handleBulkEmail}
+          onBulkWhatsApp={handleBulkWhatsApp}
+          onBulkArchive={handleArchiveLeads}
+          onBulkExport={handleExportLeads}
+          onBulkDuplicate={handleDuplicateLeads}
+          onClearSelection={handleClearSelection}
+        />
+        
+        {/* ... keep existing modals and components */}
+        <LeadForm isOpen={isFormOpen} onClose={handleCloseForm} onSave={handleSaveLead} lead={editingLead} mode={editingLead ? "edit" : "create"} />
+        <CallModal isOpen={callModalOpen} onClose={() => setCallModalOpen(false)} lead={selectedLead} onSave={handleSaveNote} />
+        <EmailModal isOpen={emailModalOpen} onClose={() => setEmailModalOpen(false)} lead={selectedLead} onSave={handleSaveNote} />
+      </div>
+    );
+  }
+
+  // Desktop Layout
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6 space-y-8">
@@ -458,15 +540,13 @@ const Index = () => {
           leads={leads} 
           onTagClick={(tag) => {
             handleFiltersChange({ ...filters, tags: filters.tags === tag ? "all" : tag });
-            setActiveStatFilter(null); // Clear stat filter when using tag filter
+            setActiveStatFilter(null);
           }}
           selectedTag={filters.tags !== "all" ? filters.tags : undefined}
         />
 
-        {/* Gamification Badges (invisible - only shows toasts) */}
         <GameificationBadges leads={leads} />
 
-        {/* Filters */}
         <LeadFilters 
           filters={filters}
           onFiltersChange={handleFiltersChange}
